@@ -162,13 +162,13 @@ input[type=file]{display:none}
     <select class="rselect unselected" id="obra" onchange="onSelChange(this,'rObra')"></select>
     <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
-    <div class="row" id="rFecha" onclick="document.getElementById('fecha').showPicker ? document.getElementById('fecha').showPicker() : document.getElementById('fecha').click()" style="cursor:pointer;position:relative">
+    <div class="row" id="rFecha" style="cursor:pointer;position:relative">
     <div class="rbadge b-blue"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/></svg></span></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
     <span id="fechaDisplay" style="font-size:15px;color:#C7C7CC;margin-left:auto">—</span>
     <span style="color:#C7C7CC;font-size:14px;margin-left:4px">›</span>
     <input type="date" id="fecha" onchange="updateFechaDisplay();clearErr('rFecha');updateBtn()"
-      style="position:absolute;opacity:0;width:100%;height:100%;top:0;left:0;cursor:pointer">
+      style="position:absolute;opacity:0;width:100%;height:100%;top:0;left:0;cursor:pointer;font-size:16px">
   </div>
 
 <!-- PERSONAL -->
