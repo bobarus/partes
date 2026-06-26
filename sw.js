@@ -1,12 +1,39 @@
-const CACHE = "parte-v1";
-const ASSETS = ["/", "/index.html"];
+const CACHE = "parte-v3";
 
-self.addEventListener("install", e =>
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)))
-);
+self.addEventListener("install", e => {
+  e.waitUntil(
+    caches.open(CACHE).then(c => c.addAll([
+      "./",
+      "./index.html",
+      "./manifest.json",
+      "./icon-180.png",
+      "./icon-192.png"
+    ]))
+  );
+  self.skipWaiting();
+});
 
-self.addEventListener("fetch", e =>
+self.addEventListener("activate", e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", e => {
+  // Network first для GAS запросов
+  if (e.request.url.includes("script.google.com")) {
+    e.respondWith(fetch(e.request).catch(() => new Response("{}", {headers:{"Content-Type":"application/json"}})));
+    return;
+  }
+  // Cache first для остального
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  )
-);
+    caches.match(e.request).then(r => r || fetch(e.request).then(res => {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(e.request, clone));
+      return res;
+    }))
+  );
+});
