@@ -544,7 +544,7 @@ loadCache();
 setTimeout(syncLists, 500);
 setInterval(syncLists, 30*60*1000);
 
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{});}
 </script>
 </body>
 </html>

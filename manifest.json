@@ -1,8 +1,9 @@
 {
   "name": "Parte de Trabajo",
-  "short_name": "Partes",
+  "short_name": "PARTE",
   "description": "Registro de partes de trabajo de obra",
-  "start_url": "/",
+  "start_url": "/partes/",
+  "scope": "/partes/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#F2F2F7",
