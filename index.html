@@ -162,12 +162,14 @@ input[type=file]{display:none}
     <select class="rselect unselected" id="obra" onchange="onSelChange(this,'rObra')"></select>
     <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
-  <div class="row" id="rFecha">
+    <div class="row" id="rFecha" onclick="document.getElementById('fecha').showPicker ? document.getElementById('fecha').showPicker() : document.getElementById('fecha').click()" style="cursor:pointer;position:relative">
     <div class="rbadge b-blue"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/></svg></span></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
-    <input type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;color:#000;text-align:right;flex:1;min-width:0;cursor:pointer">
+    <span id="fechaDisplay" style="font-size:15px;color:#C7C7CC;margin-left:auto">—</span>
+    <span style="color:#C7C7CC;font-size:14px;margin-left:4px">›</span>
+    <input type="date" id="fecha" onchange="updateFechaDisplay();clearErr('rFecha');updateBtn()"
+      style="position:absolute;opacity:0;width:100%;height:100%;top:0;left:0;cursor:pointer">
   </div>
-</div>
 
 <!-- PERSONAL -->
 <div class="slabel"><span id="s2lbl">Personal</span></div>
@@ -326,7 +328,7 @@ function setL(l){
   document.getElementById('langDrop').classList.remove('open');
   ['optEs','optRu','optEn'].forEach(id=>document.getElementById(id).classList.remove('active'));
   document.getElementById(l==='es'?'optEs':l==='ru'?'optRu':'optEn').classList.add('active');
-  apply(); buildAllSelects();
+  apply(); buildAllSelects(); updateFechaDisplay();
 }
 
 function apply(){
@@ -518,9 +520,25 @@ function clearForm(skip=false){
   });
   document.getElementById('horas').value='';
   document.getElementById('fecha').value=new Date().toISOString().split('T')[0];
+  updateFechaDisplay();
+updateFechaDisplay();
   ['photosObra','photosMat'].forEach(id=>document.getElementById(id).querySelectorAll('.photo-thumb').forEach(e=>e.remove()));
   ['rCliente','rObra','rFecha','rOperario','rTipo','rHoras'].forEach(id=>clearErr(id));
   setTipoMode('list');setCompMode('list');updateBtn();
+}
+
+/* ── FECHA DISPLAY ── */
+function updateFechaDisplay() {
+  const val = document.getElementById('fecha').value;
+  const el = document.getElementById('fechaDisplay');
+  if (!val) { el.textContent = '—'; el.style.color = '#C7C7CC'; return; }
+  const [y,m,d] = val.split('-');
+  const months = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const monthsRu = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  const monthsEn = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mArr = lang==='ru' ? monthsRu : lang==='en' ? monthsEn : months;
+  el.textContent = d + ' ' + mArr[parseInt(m)-1] + ' ' + y;
+  el.style.color = '#000';
 }
 
 /* ── HORAS STEPPER ── */
@@ -535,6 +553,7 @@ function changeHoras(delta) {
 
 /* ── INIT ── */
 document.getElementById('fecha').value=new Date().toISOString().split('T')[0];
+updateFechaDisplay();
 apply();
 buildAllSelects();
 updateBtn();
