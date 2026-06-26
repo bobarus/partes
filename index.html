@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="shortcut icon" href="favicon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" crossorigin="anonymous">
+
 
 <script>
 /* ── КОНФИГ ── */
@@ -125,6 +125,10 @@ input[type=file]{display:none}
   .lang-opt:hover{background:#2C2C2E}.globe-btn{background:#1A3A5C}
 }
 </style>
+<style>
+.ico{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.ico svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+</style>
 </head>
 <body>
 
@@ -133,7 +137,7 @@ input[type=file]{display:none}
     <div style="width:34px"></div>
     <span class="nav-title" id="nTitle">Parte de trabajo</span>
     <div style="position:relative">
-      <button class="globe-btn" onclick="toggleLang(event)"><i class="ti ti-world"></i></button>
+      <button class="globe-btn" onclick="toggleLang(event)"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span></button>
       <div class="lang-dropdown" id="langDrop">
         <button class="lang-opt active" id="optEs" onclick="setL('es')">🇪🇸 Español</button>
         <button class="lang-opt" id="optRu" onclick="setL('ru')">🇷🇺 Русский</button>
@@ -147,19 +151,19 @@ input[type=file]{display:none}
 <div class="slabel"><span id="s1lbl">Identificación</span><span class="req-badge" id="s1req">• obligatorio</span></div>
 <div class="card">
   <div class="row" id="rCliente">
-    <div class="rbadge b-blue"><i class="ti ti-building"></i></div>
+    <div class="rbadge b-blue"><span class="ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M9 21V7l7-4v18M3 21V11l6-4"/><path d="M12 8h1m-1 4h1m-1 4h1M9 8h1m-1 4h1m-1 4h1"/></svg></span></div>
     <span class="rlabel" id="lCliente">Cliente <span class="req-dot"></span></span>
     <select class="rselect unselected" id="cliente" onchange="onSelChange(this,'rCliente')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
   <div class="row" id="rObra">
-    <div class="rbadge b-blue"><i class="ti ti-map-pin"></i></div>
+    <div class="rbadge b-blue"><span class="ico"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></span></div>
     <span class="rlabel" id="lObra">Obra <span class="req-dot"></span></span>
     <select class="rselect unselected" id="obra" onchange="onSelChange(this,'rObra')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
   <div class="row" id="rFecha">
-    <div class="rbadge b-blue"><i class="ti ti-calendar"></i></div>
+    <div class="rbadge b-blue"><span class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/></svg></span></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
     <input class="rinput" type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()">
   </div>
@@ -169,19 +173,19 @@ input[type=file]{display:none}
 <div class="slabel"><span id="s2lbl">Personal</span></div>
 <div class="card">
   <div class="row" id="rOperario">
-    <div class="rbadge b-green"><i class="ti ti-user-circle"></i></div>
+    <div class="rbadge b-green"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6 20.7a6 6 0 0 1 12 0"/></svg></span></div>
     <span class="rlabel" id="lOp">Operario <span class="req-dot"></span></span>
     <select class="rselect unselected" id="operario" onchange="onSelChange(this,'rOperario')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
   <div class="row">
-    <div class="rbadge b-green"><i class="ti ti-user-plus"></i></div>
+    <div class="rbadge b-green"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 11h6m-3-3v6"/></svg></span></div>
     <span class="rlabel" id="lAy">Ayudante</span>
     <select class="rselect unselected" id="ayudante" onchange="this.classList.toggle('unselected',!this.value)"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
   <div class="row">
-    <div class="rbadge b-green"><i class="ti ti-car"></i></div>
+    <div class="rbadge b-green"><span class="ico"><svg viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14l3 4v4a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/><path d="M5 9l1-4h10l2 4"/></svg></span></div>
     <span class="rlabel" id="lVeh">Vehículo</span>
     <input class="rinput" id="vehiculo">
   </div>
@@ -191,7 +195,7 @@ input[type=file]{display:none}
 <div class="slabel"><span id="s3lbl">Trabajo</span></div>
 <div class="card">
   <div class="mode-header" id="rTipo">
-    <div class="rbadge b-orange"><i class="ti ti-tools"></i></div>
+    <div class="rbadge b-orange"><span class="ico"><svg viewBox="0 0 24 24"><path d="M3 21l7.5-7.5M14.5 4.5a4 4 0 0 1 4 4 4 4 0 0 1-.5 2l-9.5 9.5a2 2 0 0 1-3-3l9.5-9.5a4 4 0 0 1-1-3z"/><path d="M20 9l-9 9"/></svg></span></div>
     <span class="rlabel" id="lTipo">Tipo <span class="req-dot"></span></span>
     <div class="mode-toggle">
       <button class="ct on" id="ctTL" onclick="setTipoMode('list')">Lista</button>
@@ -200,13 +204,13 @@ input[type=file]{display:none}
   </div>
   <div class="mode-list-row" id="tipoListRow">
     <select class="rselect unselected" id="tipo" style="width:100%;font-size:14px" onchange="onSelChange(this,'rTipo')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
   <div class="mode-text-row" id="tipoTextRow">
     <input class="mode-text-input" id="tipoNew" oninput="clearErr('rTipo');updateBtn()">
   </div>
   <div class="row" id="rHoras" style="min-height:56px">
-    <div class="rbadge b-orange"><i class="ti ti-clock"></i></div>
+    <div class="rbadge b-orange"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span></div>
     <span class="rlabel" id="lHoras">Horas <span class="req-dot"></span></span>
     <div style="display:flex;align-items:center;gap:12px;margin-left:auto">
       <button onclick="changeHoras(-1)" style="width:32px;height:32px;border-radius:50%;background:#F2F2F7;border:none;font-size:20px;color:#007AFF;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">−</button>
@@ -224,7 +228,7 @@ input[type=file]{display:none}
     <div class="photo-sublabel" id="lFotosObra">Fotos de obra</div>
     <div class="photo-scroll" id="photosObra">
       <label class="photo-add-btn" for="inObra">
-        <i class="ti ti-camera-plus" style="font-size:20px"></i>
+        <span class="ico"><svg viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2l-2-3H7L5 7z"/><circle cx="10" cy="13" r="3"/><path d="M20 7v3m0 0v3m0-3h3m-3 0h-3"/></svg></span>
         <span id="addO">Foto</span>
       </label>
       <input type="file" id="inObra" accept="image/*" multiple onchange="addPhotos(this,'photosObra')">
@@ -236,7 +240,7 @@ input[type=file]{display:none}
 <div class="slabel"><span id="s5lbl">Materiales</span></div>
 <div class="card">
   <div class="mode-header">
-    <div class="rbadge b-teal"><i class="ti ti-building-store"></i></div>
+    <div class="rbadge b-teal"><span class="ico"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M3 9a4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0 4 4 4 4 0 0 0 4-4"/><path d="M5 21V9m14 12V9M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6H9z"/></svg></span></div>
     <span class="rlabel" id="lComp">Compañía</span>
     <div class="mode-toggle">
       <button class="ct on" id="ctCL" onclick="setCompMode('list')">Lista</button>
@@ -245,7 +249,7 @@ input[type=file]{display:none}
   </div>
   <div class="mode-list-row" id="compListRow">
     <select class="rselect unselected" id="compania" style="width:100%" onchange="this.classList.toggle('unselected',!this.value)"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <span style="color:#C7C7CC;font-size:14px;margin-left:4px;flex-shrink:0">›</span>
   </div>
   <div class="mode-text-row" id="compTextRow">
     <input class="mode-text-input" id="companiaNew">
@@ -255,7 +259,7 @@ input[type=file]{display:none}
     <textarea class="rta" id="materiales"></textarea>
   </div>
   <div class="row">
-    <div class="rbadge b-teal"><i class="ti ti-coin-euro"></i></div>
+    <div class="rbadge b-teal"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.5a4 4 0 1 0 0 5M8 11h6m-6 2h6"/></svg></span></div>
     <span class="rlabel" id="lPrecio">Precio</span>
     <input class="rinput" type="number" id="precio" min="0" step="0.01" inputmode="decimal">
     <span style="font-size:13px;color:#8E8E93;margin-left:4px;flex-shrink:0">EUR</span>
@@ -264,7 +268,7 @@ input[type=file]{display:none}
     <div class="photo-sublabel" id="lFotosMat">Fotos / recibo</div>
     <div class="photo-scroll" id="photosMat">
       <label class="photo-add-btn" for="inMat">
-        <i class="ti ti-receipt" style="font-size:20px"></i>
+        <span class="ico"><svg viewBox="0 0 24 24" style="width:22px;height:22px"><path d="M5 21V5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 7h6m-6 4h6m-6 4h4"/></svg></span>
         <span id="addM">Recibo</span>
       </label>
       <input type="file" id="inMat" accept="image/*" multiple onchange="addPhotos(this,'photosMat')">
