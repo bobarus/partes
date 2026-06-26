@@ -12,7 +12,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="shortcut icon" href="favicon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" crossorigin="anonymous">
 
 <script>
 /* ── КОНФИГ ── */
@@ -54,7 +54,7 @@ function _gasCallback(json) {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif}
-body{padding-bottom:48px}
+body{padding-bottom:calc(env(safe-area-inset-bottom, 20px) + 48px)}
 .nav{background:rgba(242,242,247,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 20px 12px;padding-top:max(14px,env(safe-area-inset-top));border-bottom:0.5px solid rgba(60,60,67,0.12);position:sticky;top:0;z-index:100}
 .nav-row{display:flex;align-items:center;justify-content:space-between}
 .nav-title{font-size:34px;font-weight:700;color:#000;letter-spacing:-0.5px;flex:1;text-align:center}
@@ -76,6 +76,7 @@ body{padding-bottom:48px}
 .rlabel{font-size:15px;color:#000;flex-shrink:0;display:flex;align-items:center;gap:5px;margin-right:10px}
 .req-dot{width:5px;height:5px;border-radius:50%;background:#FF3B30;display:inline-block;flex-shrink:0}
 .rinput{flex:1;text-align:right;font-size:15px;color:#000;border:none;outline:none;background:transparent;font-family:inherit;min-width:0}
+input[type=date].rinput{text-align:right;-webkit-appearance:none}
 .rinput::placeholder{color:#C7C7CC !important}
 .rselect{flex:1;text-align:right;font-size:15px;color:#000;border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;min-width:0;direction:rtl}
 .rselect option{direction:ltr}
@@ -110,7 +111,7 @@ input[type=file]{display:none}
 .btn-save{display:block;width:calc(100% - 32px);margin:20px 16px 6px;background:#A8C8F0;color:#fff;border:none;border-radius:14px;padding:13px;font-size:16px;font-weight:600;font-family:inherit;cursor:not-allowed;letter-spacing:-0.2px;transition:background .2s}
 .btn-save.ready{background:#007AFF;cursor:pointer}
 .btn-save.ready:active{opacity:.85;transform:scale(.98)}
-.btn-clear{display:block;width:calc(100% - 32px);margin:0 16px 16px;text-align:center;font-size:14px;color:#FF8A80;background:none;border:none;cursor:pointer;padding:7px;font-family:inherit}
+.btn-clear{display:block;width:calc(100% - 32px);margin:0 16px;text-align:center;font-size:14px;color:#FF8A80;background:none;border:none;cursor:pointer;padding:7px;font-family:inherit}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:rgba(28,28,30,.95);color:#fff;border-radius:12px;padding:11px 20px;font-size:14px;font-weight:500;white-space:nowrap;z-index:999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
@@ -160,7 +161,7 @@ input[type=file]{display:none}
   <div class="row" id="rFecha">
     <div class="rbadge b-blue"><i class="ti ti-calendar"></i></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
-    <input class="rinput" type="date" id="fecha" style="text-align:right" onchange="clearErr('rFecha');updateBtn()">
+    <input class="rinput" type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()">
   </div>
 </div>
 
@@ -204,10 +205,16 @@ input[type=file]{display:none}
   <div class="mode-text-row" id="tipoTextRow">
     <input class="mode-text-input" id="tipoNew" oninput="clearErr('rTipo');updateBtn()">
   </div>
-  <div class="row" id="rHoras">
+  <div class="row" id="rHoras" style="min-height:56px">
     <div class="rbadge b-orange"><i class="ti ti-clock"></i></div>
     <span class="rlabel" id="lHoras">Horas <span class="req-dot"></span></span>
-    <input class="rinput" type="number" id="horas" min="0" step="1" inputmode="numeric" pattern="[0-9]*" oninput="clearErr('rHoras');updateBtn()">
+    <div style="display:flex;align-items:center;gap:12px;margin-left:auto">
+      <button onclick="changeHoras(-1)" style="width:32px;height:32px;border-radius:50%;background:#F2F2F7;border:none;font-size:20px;color:#007AFF;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">−</button>
+      <input class="rinput" type="number" id="horas" min="0" step="1" inputmode="numeric" pattern="[0-9]*"
+        style="width:48px;text-align:center;font-size:20px;font-weight:600;flex:none"
+        oninput="clearErr('rHoras');updateBtn()" value="0">
+      <button onclick="changeHoras(1)" style="width:32px;height:32px;border-radius:50%;background:#007AFF;border:none;font-size:20px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1">+</button>
+    </div>
   </div>
   <div class="row tarow">
     <span class="rlabel" id="lTrab">Trabajos realizados</span>
@@ -510,6 +517,16 @@ function clearForm(skip=false){
   ['photosObra','photosMat'].forEach(id=>document.getElementById(id).querySelectorAll('.photo-thumb').forEach(e=>e.remove()));
   ['rCliente','rObra','rFecha','rOperario','rTipo','rHoras'].forEach(id=>clearErr(id));
   setTipoMode('list');setCompMode('list');updateBtn();
+}
+
+/* ── HORAS STEPPER ── */
+function changeHoras(delta) {
+  const el = document.getElementById('horas');
+  const val = parseInt(el.value) || 0;
+  const newVal = Math.max(0, val + delta);
+  el.value = newVal;
+  clearErr('rHoras');
+  updateBtn();
 }
 
 /* ── INIT ── */
