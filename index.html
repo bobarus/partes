@@ -87,14 +87,14 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px)+56px)}
 .b-teal{background:linear-gradient(145deg,#4DD0E1,#00ACC1)}
 .rbadge svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-.rlabel{font-size:16px;color:#000;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.rlabel{font-size:16px;color:#000;flex-shrink:0;display:flex;align-items:center;gap:4px;white-space:nowrap;margin-right:8px}
 .req-dot{width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0}
 
-.rinput{flex:1;text-align:right;font-size:16px;color:#000;border:none;outline:none;background:transparent;font-family:inherit;min-width:0}
+.rinput{flex:1;text-align:right;font-size:16px;color:#000;border:none;outline:none;background:transparent;font-family:inherit;min-width:0;margin-left:auto}
 .rinput::placeholder{color:var(--ph)}
 input[type=date].rinput{-webkit-appearance:none}
 
-.rselect{flex:1;text-align:right;font-size:15px;color:var(--gray);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;min-width:0}
+.rselect{font-size:15px;color:var(--gray);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;max-width:60%;text-align:right;flex:1}
 .rselect.has-val{color:#000}
 .rchev{color:var(--ph);margin-left:6px;flex-shrink:0;width:8px;height:14px}
 .rchev svg{width:8px;height:14px;stroke:var(--ph);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
@@ -204,7 +204,7 @@ input[type=file]{display:none}
   <div class="row" id="rFecha">
     <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
-    <input class="rinput" type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()">
+    <input class="rinput" type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="margin-left:auto;text-align:right;-webkit-appearance:none">
   </div>
 </div>
 
@@ -226,7 +226,7 @@ input[type=file]{display:none}
   <div class="row">
     <div class="rbadge b-green"><svg viewBox="0 0 24 24"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M5 17H3v-6l2-5h12l2 5v6h-2M5 17h10M3 11h18"/></svg></div>
     <span class="rlabel" id="lVeh">Vehículo</span>
-    <input class="rinput" id="vehiculo">
+    <input class="rinput" id="vehiculo" style="text-align:right">
   </div>
 </div>
 
@@ -242,7 +242,7 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="mode-list-row" id="tipoListRow">
-    <select class="rselect" id="tipo" style="flex:1;font-size:15px" onchange="onSel(this,'rTipo')"></select>
+    <select class="rselect" id="tipo" style="font-size:15px;max-width:70%;margin-left:auto" onchange="onSel(this,'rTipo')"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="tipoTextRow">
@@ -292,7 +292,7 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="mode-list-row" id="compListRow">
-    <select class="rselect" id="compania" style="flex:1" onchange="this.classList.toggle('has-val',!!this.value)"></select>
+    <select class="rselect" id="compania" style="max-width:70%;margin-left:auto" onchange="this.classList.toggle('has-val',!!this.value)"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="compTextRow">
@@ -308,8 +308,7 @@ input[type=file]{display:none}
     <div class="rbadge b-teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.4a4 4 0 1 0 .1 5.2M8.5 11h5m-5 2h5"/></svg></div>
     <span class="rlabel" id="lPrecio">Precio</span>
     <div style="display:flex;align-items:center;gap:4px;margin-left:auto">
-      <input type="number" id="precio" min="0" step="0.01" inputmode="decimal" placeholder="0.00"
-        style="border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;color:#000;text-align:right;width:80px;-webkit-appearance:none">
+      <input type="number" id="precio" min="0" step="0.01" inputmode="decimal" placeholder="0.00" style="border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;color:#000;text-align:right;width:80px">
       <span style="font-size:15px;color:var(--gray);flex-shrink:0">€</span>
     </div>
   </div>
@@ -343,7 +342,12 @@ input[type=file]{display:none}
     <div id="detailRows"></div>
   </div>
   <div class="success-btns">
-    <button class="btn-details" id="btnDetails" onclick="toggleDetails()">Ver detalles</button>
+    <div style="display:flex;gap:10px;width:100%">
+      <button class="btn-details" id="btnDetails" onclick="toggleDetails()" style="flex:1">Ver detalles</button>
+      <button onclick="shareRecord()" style="width:48px;height:48px;border-radius:14px;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" title="Compartir">
+        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:#2AABEE;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      </button>
+    </div>
     <button class="btn-new" id="btnNew" onclick="startNew()">+ Nuevo registro</button>
   </div>
 </div>
@@ -360,7 +364,7 @@ var T = {
     ctList:'Lista',ctOtro:'Otro',ctNew:'Nueva',
     selPh:'Seleccione',ayNone:'Sin ayudante',
     vehPh:'Matrícula / modelo',tipoNewPh:'Describir tipo...',compPh:'Nombre de la compañía...',
-    trabPh:'Describir los trabajos...',matPh:'Listar materiales...',horasPh:'0',precPh:'—',
+    trabPh:'Describir los trabajos...',matPh:'Listar materiales...',horasPh:'0',precPh:'0.00',
     confirmClear:'¿Borrar todo?',
     successTitle:'¡Informe enviado!',successSub:'El parte ha sido registrado correctamente',
     successDetails:'Ver detalles',successHide:'Ocultar detalles',successNew:'+ Nuevo registro'},
@@ -373,7 +377,7 @@ var T = {
     ctList:'Список',ctOtro:'Другое',ctNew:'Новая',
     selPh:'Выберите',ayNone:'Без помощника',
     vehPh:'Номер / модель авто',tipoNewPh:'Описать тип...',compPh:'Название компании...',
-    trabPh:'Описать работы...',matPh:'Перечислить материалы...',horasPh:'0',precPh:'—',
+    trabPh:'Описать работы...',matPh:'Перечислить материалы...',horasPh:'0',precPh:'0.00',
     confirmClear:'Очистить все поля?',
     successTitle:'Отчёт отправлен!',successSub:'Наряд успешно зарегистрирован',
     successDetails:'Подробнее',successHide:'Скрыть',successNew:'+ Новый отчёт'},
@@ -386,7 +390,7 @@ var T = {
     ctList:'List',ctOtro:'Other',ctNew:'New',
     selPh:'Select',ayNone:'No assistant',
     vehPh:'Plate / model',tipoNewPh:'Describe type...',compPh:'Company name...',
-    trabPh:'Describe work...',matPh:'List materials...',horasPh:'0',precPh:'—',
+    trabPh:'Describe work...',matPh:'List materials...',horasPh:'0',precPh:'0.00',
     confirmClear:'Clear everything?',
     successTitle:'Report sent!',successSub:'Work report registered successfully',
     successDetails:'View details',successHide:'Hide details',successNew:'+ New report'}
@@ -629,6 +633,7 @@ function showToast(msg, err) {
 var _detailsOpen = false;
 
 function showSuccess(payload) {
+  window._sharePayload = payload;
   _detailsOpen = false;
   var t = T[lang];
   document.getElementById('successTitle').textContent = t.successTitle;
@@ -662,6 +667,39 @@ function toggleDetails() {
   var t = T[lang];
   document.getElementById('successDetails').style.display = _detailsOpen ? 'block' : 'none';
   document.getElementById('btnDetails').textContent = _detailsOpen ? t.successHide : t.successDetails;
+}
+
+function shareRecord() {
+  if (!window._sharePayload) return;
+  var p = window._sharePayload;
+  var t = T[lang];
+  var text = [
+    t.successTitle,
+    '---',
+    t.lFecha   + ': ' + p.fecha,
+    t.lCliente + ': ' + p.cliente,
+    t.lObra    + ': ' + p.obra,
+    t.lOp      + ': ' + p.operario,
+    t.lTipo    + ': ' + (p.tipo || ''),
+    t.lHoras   + ': ' + p.horas + ' h'
+  ];
+  if (p.compania) text.push(t.lComp   + ': ' + p.compania);
+  if (p.precio>0) text.push(t.lPrecio + ': ' + p.precio + ' €');
+  if (p.trabajos) text.push('\n' + p.trabajos);
+
+  var shareText = text.join('\n');
+
+  if (navigator.share) {
+    navigator.share({ title: t.successTitle, text: shareText })
+      .catch(function(e){ console.log('Share cancelled'); });
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(shareText).then(function(){
+      showToast('Copiado ✓', false);
+    }).catch(function(){
+      showToast(shareText.substring(0,50)+'...', false);
+    });
+  }
 }
 
 function startNew() {
