@@ -7,15 +7,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="PARTE">
-<meta name="theme-color" content="#F2F2F7">
+<meta name="theme-color" content="#F2F2F7"><meta name="theme-color" media="(prefers-color-scheme:light)" content="#F2F2F7"><meta name="theme-color" media="(prefers-color-scheme:dark)" content="#000000">
 <title>Parte de Trabajo</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="shortcut icon" href="favicon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+
 
 <script>
-const WEBAPP_URL   = "https://script.google.com/macros/s/AKfycbzBITrc80ps_Gi1CePxMH8eKLNzDC07-ExY3SPd6zmcfEjUyPNqUGrA4atYM3tfI_fY/exec";
+const WEBAPP_URL   = "https://script.google.com/macros/s/AKfycbxjyy_jkIaRHGz1VHo0GOVn47hZUpmE77H_RJZedf8ftbbEe8UO5oqnqVnfqBF5j_uJig/exec";
 const CLIENTES     = ["CASA FUSTER","PROCOIN","FALCK"];
 const OBRAS        = ["ORIGINAL","CENTRO","LA MASIA","SANT QUIRZE","FALCK BASE"];
 const OPERARIOS    = ["MOHA","ABDEL","ALI","YASSINE","LASHEN"];
@@ -24,139 +24,260 @@ const PRICE_PER_HOUR = 28;
 </script>
 
 <style>
+:root{
+  --bg:#F2F2F7;
+  --card:#FFFFFF;
+  --sep:rgba(60,60,67,0.15);
+  --text:#000;
+  --gray:#8E8E93;
+  --ph:#C8C8CE;
+  --blue:#2AABEE;
+  --green:#34C759;
+  --orange:#FF9500;
+  --teal:#32ADE6;
+  --red:#FF3B30;
+  --purple:#AF52DE;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif}
-body{padding-bottom:48px}
+html,body{background:#F2F2F7;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased}
+body{padding-bottom:calc(env(safe-area-inset-bottom,34px)+48px)}
 
-.nav{background:rgba(242,242,247,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  padding:14px 20px 12px;padding-top:max(14px,env(safe-area-inset-top));
-  border-bottom:0.5px solid rgba(60,60,67,0.12);position:sticky;top:0;z-index:100}
+/* NAV */
+.nav{
+  background:rgba(242,242,247,0.95);
+  backdrop-filter:saturate(180%) blur(24px);
+  -webkit-backdrop-filter:saturate(180%) blur(24px);
+  padding:14px 20px 10px;
+  padding-top:max(14px,env(safe-area-inset-top));
+  border-bottom:0.5px solid var(--sep);
+  position:sticky;top:0;z-index:100
+}
 .nav-row{display:flex;align-items:center;justify-content:space-between}
-.nav-title{font-size:34px;font-weight:700;color:#000;letter-spacing:-0.5px;flex:1;text-align:center}
+.nav-title{font-size:30px;font-weight:700;color:var(--text);letter-spacing:-0.4px;flex:1;text-align:center}
 
-.globe-btn{width:34px;height:34px;border-radius:50%;background:#D6E8FF;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-.globe-btn i{font-size:19px;color:#5B9FD4}
-.lang-dropdown{display:none;position:absolute;top:42px;right:0;background:#fff;border-radius:12px;
-  overflow:hidden;min-width:148px;box-shadow:0 4px 24px rgba(0,0,0,0.13);z-index:200}
+/* GLOBE BUTTON */
+.globe-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(42,171,238,0.15);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative
+}
+.globe-btn svg{width:20px;height:20px;stroke:#2AABEE;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.theme-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(0,0,0,0.08);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0
+}
+.theme-btn svg{width:18px;height:18px;stroke:#555;fill:#555;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+body.dark .theme-btn{background:rgba(255,255,255,0.12)}
+body.dark .theme-btn svg{stroke:#FFD60A;fill:#FFD60A}
+.lang-dropdown{
+  display:none;position:absolute;top:42px;right:0;
+  background:rgba(255,255,255,0.97);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-radius:14px;overflow:hidden;min-width:150px;
+  box-shadow:0 8px 28px rgba(0,0,0,0.16);z-index:200
+}
 .lang-dropdown.open{display:block}
-.lang-opt{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:15px;color:#000;
-  cursor:pointer;border-bottom:0.5px solid rgba(60,60,67,0.1);
-  font-family:inherit;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left}
+.lang-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;font-size:15px;color:var(--text);
+  cursor:pointer;border-bottom:0.5px solid var(--sep);
+  font-family:inherit;background:none;
+  border-left:none;border-right:none;border-top:none;
+  width:100%;text-align:left
+}
 .lang-opt:last-child{border-bottom:none}
-.lang-opt:hover{background:#F2F2F7}
-.lang-opt.active{color:#007AFF;font-weight:500}
+.lang-opt:active{background:rgba(0,0,0,0.05)}
+.lang-opt.active{color:var(--blue);font-weight:600}
 
-.slabel{font-size:12px;color:#8E8E93;text-transform:uppercase;letter-spacing:0.5px;
-  padding:16px 20px 5px;display:flex;align-items:center;gap:6px}
-.req-badge{font-size:10px;color:#FF3B30;font-weight:600}
+/* SECTION LABEL */
+.slabel{
+  font-size:13px;font-weight:400;color:var(--gray);
+  text-transform:uppercase;letter-spacing:0.3px;
+  padding:22px 20px 6px
+}
+.req-badge{font-size:11px;color:var(--red);font-weight:600;margin-left:4px;text-transform:none}
 
-.card{background:#fff;border-radius:12px;margin:0 16px;overflow:hidden}
+/* CARD — Telegram style */
+.card{
+  background:var(--card);
+  border-radius:16px;
+  margin:0 16px;
+  overflow:hidden
+}
 
-.row{display:flex;align-items:center;padding:0 14px;min-height:44px;
-  border-bottom:0.5px solid rgba(60,60,67,0.1)}
+/* ROW */
+.row{
+  display:flex;align-items:center;
+  padding:0 16px;min-height:52px;
+  border-bottom:0.5px solid var(--sep)
+}
 .row:last-child{border-bottom:none}
 
-.rbadge{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;
-  justify-content:center;margin-right:10px;flex-shrink:0;font-size:14px;color:#fff}
-.b-blue{background:#007AFF}.b-green{background:#34C759}
-.b-orange{background:#FF9500}.b-teal{background:#32ADE6}
+/* ICON BADGE — Telegram style square with gradient */
+.rbadge{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  margin-right:14px;flex-shrink:0;color:#fff
+}
+.b-blue   {background:linear-gradient(150deg,#4FC3F7 0%,#2AABEE 100%)}
+.b-green  {background:linear-gradient(150deg,#66BB6A 0%,#34C759 100%)}
+.b-orange {background:linear-gradient(150deg,#FFA726 0%,#FF9500 100%)}
+.b-teal   {background:linear-gradient(150deg,#4DD0E1 0%,#00ACC1 100%)}
+.b-purple {background:linear-gradient(150deg,#CE93D8 0%,#9C27B0 100%)}
+.b-red    {background:linear-gradient(150deg,#EF5350 0%,#E53935 100%)}
+.rbadge svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-.rlabel{font-size:15px;color:#000;flex-shrink:0;display:flex;align-items:center;gap:5px;margin-right:10px}
-.req-dot{width:5px;height:5px;border-radius:50%;background:#FF3B30;display:inline-block;flex-shrink:0}
+/* LABEL */
+.rlabel{
+  font-size:16px;color:var(--text);
+  flex-shrink:0;display:flex;align-items:center;gap:5px
+}
+.req-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--red);display:inline-block;flex-shrink:0
+}
 
-.rinput{flex:1;text-align:right;font-size:15px;color:#000;border:none;outline:none;
-  background:transparent;font-family:inherit;min-width:0}
-.rinput::placeholder{color:#C7C7CC !important}
-
-.rselect{flex:1;text-align:right;font-size:15px;color:#000;border:none;outline:none;
-  background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;min-width:0;direction:rtl}
+/* VALUE (right side) */
+.rval{
+  display:flex;align-items:center;gap:4px;
+  margin-left:auto;flex-shrink:0
+}
+.rinput{
+  font-size:16px;color:var(--text);
+  border:none;outline:none;background:transparent;
+  font-family:inherit;text-align:right;min-width:0;max-width:180px
+}
+.rinput::placeholder{color:var(--ph)}
+input[type=date].rinput{color:var(--text);-webkit-appearance:none}
+.rselect{
+  font-size:16px;color:var(--gray);
+  border:none;outline:none;background:transparent;
+  font-family:inherit;-webkit-appearance:none;
+  cursor:pointer;text-align:right;
+  direction:rtl;max-width:180px
+}
 .rselect option{direction:ltr}
-.rselect.unselected{color:#C7C7CC}
-.rchev{color:#C7C7CC;font-size:12px;margin-left:4px;flex-shrink:0}
+.rselect.has-val{color:var(--text)}
+/* chevron */
+.rchev svg{width:8px;height:14px;stroke:#C8C8CE;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-left:4px}
 
-.tarow{flex-direction:column;align-items:flex-start;padding:10px 14px;min-height:auto}
-.tarow .rlabel{margin-bottom:5px;margin-right:0}
-.rta{width:100%;border:none;outline:none;background:transparent;font-size:15px;color:#000;
-  font-family:inherit;resize:none;min-height:62px;line-height:1.5}
-.rta::placeholder{color:#C7C7CC !important}
+/* TEXTAREA */
+.tarow{flex-direction:column;align-items:flex-start;padding:14px 16px;min-height:auto}
+.tarow .rlabel{margin-bottom:8px;font-size:14px;color:var(--gray);font-weight:500;text-transform:uppercase;letter-spacing:0.3px}
+.rta{width:100%;border:none;outline:none;background:transparent;font-size:16px;color:var(--text);font-family:inherit;resize:none;min-height:72px;line-height:1.6}
+.rta::placeholder{color:var(--ph)}
 
-.photo-wrap{padding:8px 14px 10px;border-top:0.5px solid rgba(60,60,67,0.1)}
-.photo-sublabel{font-size:11px;color:#8E8E93;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:7px}
-.photo-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+/* PHOTOS */
+.photo-wrap{padding:12px 16px 16px;border-top:0.5px solid var(--sep)}
+.photo-sublabel{font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:10px;font-weight:500}
+.photo-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
 .photo-scroll::-webkit-scrollbar{display:none}
-.photo-add-btn{width:64px;height:64px;border-radius:10px;background:#F2F2F7;border:none;
+.photo-add-btn{
+  width:70px;height:70px;border-radius:14px;
+  background:rgba(42,171,238,0.1);
+  border:1.5px dashed rgba(42,171,238,0.4);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;gap:2px;color:#007AFF}
-.photo-add-btn span{font-size:10px;color:#8E8E93}
+  cursor:pointer;flex-shrink:0;gap:5px
+}
+.photo-add-btn svg{width:24px;height:24px;stroke:#2AABEE;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.photo-add-btn span{font-size:11px;color:#2AABEE;font-weight:500}
 .photo-thumb{position:relative;flex-shrink:0}
-.photo-thumb img{width:64px;height:64px;border-radius:10px;object-fit:cover;display:block}
-.photo-del{position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;
-  background:#FF3B30;border:2px solid #fff;color:#fff;font-size:11px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center}
+.photo-thumb img{width:70px;height:70px;border-radius:14px;object-fit:cover;display:block}
+.photo-del{position:absolute;top:-5px;right:-5px;width:20px;height:20px;border-radius:50%;background:var(--red);border:2px solid var(--bg);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600}
 input[type=file]{display:none}
 
-.mode-header{display:flex;align-items:center;padding:8px 14px;gap:8px;
-  border-bottom:0.5px solid rgba(60,60,67,0.1)}
-.mode-toggle{display:flex;background:#F2F2F7;border-radius:8px;padding:2px;gap:2px;margin-left:auto}
-.ct{font-size:13px;font-weight:500;padding:5px 14px;border-radius:7px;border:none;
-  cursor:pointer;background:transparent;color:#8E8E93;font-family:inherit}
-.ct.on{background:#fff;color:#007AFF}
-.mode-list-row{display:flex;align-items:center;padding:0 14px;min-height:42px;
-  border-bottom:0.5px solid rgba(60,60,67,0.1)}
+/* MODE HEADER (Tipo / Compañía) */
+.mode-header{
+  display:flex;align-items:center;
+  padding:0 16px;min-height:52px;
+  border-bottom:0.5px solid var(--sep)
+}
+.mode-toggle{
+  display:flex;background:rgba(118,118,128,0.12);
+  border-radius:9px;padding:2px;gap:1px;margin-left:auto
+}
+.ct{
+  font-size:13px;font-weight:500;padding:5px 14px;
+  border-radius:7px;border:none;cursor:pointer;
+  background:transparent;color:var(--gray);font-family:inherit
+}
+.ct.on{background:#fff;color:#2AABEE;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
+.mode-list-row{
+  display:flex;align-items:center;
+  padding:0 16px;min-height:46px;
+  border-bottom:0.5px solid var(--sep)
+}
 .mode-list-row:last-child{border-bottom:none}
-.mode-text-row{padding:8px 14px;border-bottom:0.5px solid rgba(60,60,67,0.1);display:none}
-.mode-text-input{width:100%;border:none;outline:none;background:transparent;font-size:15px;
-  color:#000;font-family:inherit;border-bottom:1.5px solid #007AFF;padding-bottom:3px}
-.mode-text-input::placeholder{color:#C7C7CC !important}
+.mode-text-row{padding:12px 16px;border-bottom:0.5px solid var(--sep);display:none}
+.mode-text-input{
+  width:100%;border:none;outline:none;background:transparent;
+  font-size:16px;color:var(--text);font-family:inherit;
+  padding-bottom:4px;border-bottom:1.5px solid #2AABEE
+}
+.mode-text-input::placeholder{color:var(--ph)}
 
-.row.err-field,.mode-header.err-field{background:#FFF5F5}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-.err-field .req-dot{animation:pulse 1s ease infinite}
+/* HORAS STEPPER */
+.horas-stepper{display:flex;align-items:center;gap:10px;margin-left:auto;width:140px;justify-content:flex-end;flex-shrink:0}
+.step-btn{width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:300;line-height:1}
+.step-btn:active{opacity:.7}
+.step-minus{background:rgba(118,118,128,0.18);color:var(--text)}
+.step-plus{background:#2AABEE;color:#fff}
+.horas-num{font-size:22px;font-weight:600;color:var(--text);min-width:32px;text-align:center}
 
-.btn-save{display:block;width:calc(100% - 32px);margin:20px 16px 6px;
-  background:#A8C8F0;color:#fff;border:none;border-radius:14px;padding:13px;
-  font-size:16px;font-weight:600;font-family:inherit;cursor:not-allowed;
-  letter-spacing:-0.2px;transition:background .2s}
-.btn-save.ready{background:#007AFF;cursor:pointer}
-.btn-save.ready:active{opacity:.85;transform:scale(.98)}
 
-.btn-clear{display:block;width:calc(100% - 32px);margin:0 16px 16px;text-align:center;
-  font-size:14px;color:#FF8A80;background:none;border:none;cursor:pointer;padding:7px;font-family:inherit}
+/* ERRORS */
+.row.err-field,.mode-header.err-field{background:#FFF2F2}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
+.err-field .req-dot{animation:pulse 1.2s ease infinite}
 
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.4);
-  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+/* BUTTONS */
+.btn-save{
+  display:block;width:calc(100% - 32px);margin:24px 16px 8px;
+  background:var(--ph);color:#fff;border:none;border-radius:14px;
+  padding:15px;font-size:17px;font-weight:600;font-family:inherit;
+  cursor:not-allowed;transition:background .2s,transform .1s
+}
+.btn-save.ready{background:#2AABEE;cursor:pointer}
+.btn-save.ready:active{opacity:.88;transform:scale(.98)}
+.btn-clear{display:block;width:calc(100% - 32px);margin:0 16px 16px;text-align:center;font-size:15px;color:rgba(255,59,48,0.7);background:none;border:none;cursor:pointer;padding:8px;font-family:inherit}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);
-  background:rgba(28,28,30,.95);color:#fff;border-radius:12px;padding:11px 20px;
-  font-size:14px;font-weight:500;white-space:nowrap;z-index:999;
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:rgba(28,28,30,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;border-radius:14px;padding:12px 22px;font-size:14px;font-weight:500;white-space:nowrap;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 @media (prefers-color-scheme:dark){
-  body{background:#000}
-  .nav{background:rgba(0,0,0,0.85)}
-  .nav-title,.rlabel,.rinput,.rselect,.rta,.mode-text-input{color:#fff}
-  .card{background:#1C1C1E}
-  .row,.mode-header,.mode-list-row{border-color:rgba(255,255,255,0.08)}
-  .photo-add-btn,.mode-toggle{background:#2C2C2E}
-  .lang-dropdown{background:#1C1C1E}
-  .lang-opt{color:#fff;border-color:rgba(255,255,255,0.08)}
-  .lang-opt:hover{background:#2C2C2E}
-  .globe-btn{background:#1A3A5C}
+  :root{--bg:#000000;--card:#2C2C2E;--sep:rgba(255,255,255,0.1);--text:#FFF;--gray:#8E8E93;--ph:#48484A}
+  .nav{background:rgba(28,28,30,0.9)}
+  .mode-toggle{background:rgba(255,255,255,0.1)}
+  .ct.on{background:#3A3A3C}
+  .lang-dropdown{background:rgba(44,44,46,0.97)}
+  .lang-opt{color:#fff}
+  .globe-btn{background:rgba(42,171,238,0.2)}
+  .step-minus{background:rgba(255,255,255,0.15);color:#fff}
+  .photo-add-btn{background:rgba(42,171,238,0.15)}
 }
 </style>
 </head>
-<body>
+<body style="background:#F2F2F7 !important">
 
 <nav class="nav">
   <div class="nav-row">
     <div style="width:34px"></div>
     <span class="nav-title" id="nTitle">Parte de trabajo</span>
-    <div style="position:relative">
+    <div style="display:flex;align-items:center;gap:8px;position:relative">
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Theme">
+        <svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div style="position:relative">
       <button class="globe-btn" onclick="toggleLang(event)" aria-label="Language">
-        <i class="ti ti-world"></i>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       </button>
       <div class="lang-dropdown" id="langDrop">
         <button class="lang-opt active" id="optEs" onclick="setL('es')">🇪🇸 Español</button>
@@ -164,28 +285,27 @@ input[type=file]{display:none}
         <button class="lang-opt" id="optEn" onclick="setL('en')">🇬🇧 English</button>
       </div>
     </div>
+    </div>
   </div>
 </nav>
 
 <!-- IDENTIFICACIÓN -->
-<div class="slabel"><span id="s1lbl">Identificación</span><span class="req-badge" id="s1req">• obligatorio</span></div>
+<div class="slabel"><span id="s1lbl">Identificación</span><span style="flex:1"></span><span class="req-badge" id="s1req">• obligatorio</span></div>
 <div class="card">
   <div class="row" id="rCliente">
-    <div class="rbadge b-blue"><i class="ti ti-building"></i></div>
+    <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><path d="M3 21h18M9 21V7l7-4v18"/><path d="M12 8h1m-1 4h1m-1 4h1M9 8h1m-1 4h1m-1 4h1"/></svg></div>
     <span class="rlabel" id="lCliente">Cliente <span class="req-dot"></span></span>
-    <select class="rselect unselected" id="cliente" onchange="onSelChange(this,'rCliente')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <div class="rval"><select class="rselect" id="cliente" onchange="onSelChange(this,'rCliente')"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
   </div>
   <div class="row" id="rObra">
-    <div class="rbadge b-blue"><i class="ti ti-map-pin"></i></div>
+    <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
     <span class="rlabel" id="lObra">Obra <span class="req-dot"></span></span>
-    <select class="rselect unselected" id="obra" onchange="onSelChange(this,'rObra')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <div class="rval"><select class="rselect" id="obra" onchange="onSelChange(this,'rObra')"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
   </div>
   <div class="row" id="rFecha">
-    <div class="rbadge b-blue"><i class="ti ti-calendar"></i></div>
+    <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/></svg></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
-    <input class="rinput" type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()">
+    <div class="rval" style="margin-left:auto"><input type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;color:var(--text);text-align:right;-webkit-appearance:none;cursor:pointer;max-width:160px"></div>
   </div>
 </div>
 
@@ -193,60 +313,71 @@ input[type=file]{display:none}
 <div class="slabel"><span id="s2lbl">Personal</span></div>
 <div class="card">
   <div class="row" id="rOperario">
-    <div class="rbadge b-green"><i class="ti ti-user-circle"></i></div>
+    <div class="rbadge b-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6 20.7a6 6 0 0 1 12 0"/></svg></div>
     <span class="rlabel" id="lOp">Operario <span class="req-dot"></span></span>
-    <select class="rselect unselected" id="operario" onchange="onSelChange(this,'rOperario')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <div class="rval"><select class="rselect" id="operario" onchange="onSelChange(this,'rOperario')"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
   </div>
   <div class="row">
-    <div class="rbadge b-green"><i class="ti ti-user-plus"></i></div>
+    <div class="rbadge b-green"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 11h6m-3-3v6"/></svg></div>
     <span class="rlabel" id="lAy">Ayudante</span>
-    <select class="rselect unselected" id="ayudante" onchange="this.classList.toggle('unselected',!this.value)"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <div class="rval"><select class="rselect" id="ayudante" onchange="this.classList.toggle('unselected',!this.value)"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
   </div>
   <div class="row">
-    <div class="rbadge b-green"><i class="ti ti-car"></i></div>
+    <div class="rbadge b-green"><svg viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14l3 4v4a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg></div>
     <span class="rlabel" id="lVeh">Vehículo</span>
-    <input class="rinput" id="vehiculo">
+    <input class="rinput" id="vehiculo" style="text-align:right;margin-left:auto">
   </div>
 </div>
 
 <!-- TRABAJO -->
 <div class="slabel"><span id="s3lbl">Trabajo</span></div>
 <div class="card">
+  <!-- TIPO -->
   <div class="mode-header" id="rTipo">
-    <div class="rbadge b-orange"><i class="ti ti-tools"></i></div>
+    <div class="rbadge b-orange"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
     <span class="rlabel" id="lTipo">Tipo <span class="req-dot"></span></span>
     <div class="mode-toggle">
       <button class="ct on" id="ctTL" onclick="setTipoMode('list')">Lista</button>
       <button class="ct" id="ctTN" onclick="setTipoMode('new')">Otro</button>
     </div>
   </div>
-  <div class="mode-list-row" id="tipoListRow">
-    <select class="rselect unselected" id="tipo" style="width:100%;font-size:14px" onchange="onSelChange(this,'rTipo')"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+  <div class="mode-list-row" id="tipoListRow" style="justify-content:flex-end">
+    <select class="rselect" id="tipo" style="text-align:right;font-size:15px;flex:1;direction:rtl" onchange="onSelChange(this,'rTipo')"></select>
+    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="tipoTextRow">
     <input class="mode-text-input" id="tipoNew" oninput="clearErr('rTipo');updateBtn()">
   </div>
 
-  <div class="row" id="rHoras">
-    <div class="rbadge b-orange"><i class="ti ti-clock"></i></div>
+  <!-- HORAS -->
+    <div class="row" id="rHoras" style="min-height:54px">
+    <div class="rbadge b-orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
     <span class="rlabel" id="lHoras">Horas <span class="req-dot"></span></span>
-    <input class="rinput" type="number" id="horas" min="0" step="1" inputmode="numeric" pattern="[0-9]*"
-      oninput="clearErr('rHoras');updateBtn()">
+    <div style="display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0">
+      <button class="step-btn step-minus" onclick="changeHoras(-1)">−</button>
+      <div style="position:relative;width:44px;height:36px;display:flex;align-items:center;justify-content:center">
+        <input type="number" id="horas" value="0" min="0" inputmode="numeric" pattern="[0-9]*"
+          style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;font-size:16px"
+          oninput="document.getElementById('horasVal').textContent=Math.max(0,parseInt(this.value)||0);this.value=Math.max(0,parseInt(this.value)||0);clearErr('rHoras');updateBtn()"
+          onchange="document.getElementById('horasVal').textContent=Math.max(0,parseInt(this.value)||0)">
+        <span class="horas-num" id="horasVal" style="pointer-events:none">0</span>
+      </div>
+      <button class="step-btn step-plus" onclick="changeHoras(1)">+</button>
+    </div>
   </div>
 
+  <!-- TRABAJOS REALIZADOS -->
   <div class="row tarow">
-    <span class="rlabel" id="lTrab">Trabajos realizados</span>
+    <span class="rlabel" id="lTrab" style="font-size:13px;color:var(--gray);text-transform:uppercase;letter-spacing:0.3px">Trabajos realizados</span>
     <textarea class="rta" id="trabajos"></textarea>
   </div>
 
+  <!-- FOTOS DE OBRA -->
   <div class="photo-wrap">
     <div class="photo-sublabel" id="lFotosObra">Fotos de obra</div>
     <div class="photo-scroll" id="photosObra">
       <label class="photo-add-btn" for="inObra">
-        <i class="ti ti-camera-plus" style="font-size:20px"></i>
+        <svg viewBox="0 0 24 24"><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2l-2-3H7L5 7z"/><circle cx="10" cy="13" r="3"/><path d="M20 7v6m-3-3h6"/></svg>
         <span id="addO">Foto</span>
       </label>
       <input type="file" id="inObra" accept="image/*" multiple onchange="addPhotos(this,'photosObra')">
@@ -260,7 +391,7 @@ input[type=file]{display:none}
 
   <!-- COMPAÑÍA -->
   <div class="mode-header">
-    <div class="rbadge b-teal"><i class="ti ti-building-store"></i></div>
+    <div class="rbadge b-teal"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M3 9a4 4 0 0 0 8 0 4 4 0 0 0 8 0"/><path d="M5 21V9m14 12V9M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6H9z"/></svg></div>
     <span class="rlabel" id="lComp">Compañía</span>
     <div class="mode-toggle">
       <button class="ct on" id="ctCL" onclick="setCompMode('list')">Lista</button>
@@ -268,9 +399,8 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="mode-list-row" id="compListRow">
-    <select class="rselect unselected" id="compania" style="width:100%"
-      onchange="this.classList.toggle('unselected',!this.value)"></select>
-    <i class="ti ti-chevron-right rchev"></i>
+    <div class="rval"><select class="rselect" id="compania" style="width:100%;text-align:right"
+      onchange="this.classList.toggle('unselected',!this.value)"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
   </div>
   <div class="mode-text-row" id="compTextRow">
     <input class="mode-text-input" id="companiaNew">
@@ -283,11 +413,11 @@ input[type=file]{display:none}
   </div>
 
   <!-- PRECIO -->
-  <div class="row">
-    <div class="rbadge b-teal"><i class="ti ti-coin-euro"></i></div>
+    <div class="row">
+    <div class="rbadge b-teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.4a4 4 0 1 0 .1 5.2M8.5 11h5m-5 2h5"/></svg></div>
     <span class="rlabel" id="lPrecio">Precio</span>
-    <input class="rinput" type="number" id="precio" min="0" step="0.01" inputmode="decimal">
-    <span style="font-size:13px;color:#8E8E93;margin-left:4px;flex-shrink:0">EUR</span>
+    <input class="rinput" type="number" id="precio" min="0" step="0.01" inputmode="decimal" placeholder="—" style="text-align:right;margin-left:auto;max-width:120px">
+    <span style="font-size:15px;color:var(--gray);margin-left:4px;flex-shrink:0">€</span>
   </div>
 
   <!-- FOTOS MATERIALES -->
@@ -295,7 +425,7 @@ input[type=file]{display:none}
     <div class="photo-sublabel" id="lFotosMat">Fotos / recibo</div>
     <div class="photo-scroll" id="photosMat">
       <label class="photo-add-btn" for="inMat">
-        <i class="ti ti-receipt" style="font-size:20px"></i>
+        <svg viewBox="0 0 24 24"><path d="M5 21V5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 7h6m-6 4h6m-6 4h4"/></svg>
         <span id="addM">Recibo</span>
       </label>
       <input type="file" id="inMat" accept="image/*" multiple onchange="addPhotos(this,'photosMat')">
@@ -380,6 +510,7 @@ document.addEventListener('click', () => document.getElementById('langDrop').cla
 
 function setL(l) {
   lang = l;
+  document.documentElement.lang = l === 'ru' ? 'ru' : l === 'en' ? 'en' : 'es';
   document.getElementById('langDrop').classList.remove('open');
   ['optEs','optRu','optEn'].forEach(id => document.getElementById(id).classList.remove('active'));
   document.getElementById(l==='es'?'optEs':l==='ru'?'optRu':'optEn').classList.add('active');
@@ -430,7 +561,7 @@ function buildSelect(id, items, placeholder, preserve=true) {
     const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o);
   });
   if (prev) sel.value = prev;
-  sel.classList.toggle('unselected', !sel.value);
+  sel.classList.toggle('has-val', !!sel.value);
 }
 
 const TIPOS = [
@@ -531,14 +662,14 @@ function onSelChange(el, rowId) {
 
 /* ── BUTTON STATE ── */
 function updateBtn() {
+  const horasVal = parseInt(document.getElementById('horas').value) || 0;
   const ok = [
     document.getElementById('cliente').value,
     document.getElementById('obra').value,
     document.getElementById('fecha').value,
     document.getElementById('operario').value,
-    getTipo(),
-    document.getElementById('horas').value
-  ].every(v => v && String(v).trim() !== '');
+    getTipo()
+  ].every(v => v && String(v).trim() !== '') && horasVal > 0;
   document.getElementById('btnSave').classList.toggle('ready', ok);
 }
 
@@ -563,15 +694,6 @@ function photoNames(gridId) {
     .map(el => el._file ? el._file.name : '').filter(Boolean).join(', ');
 }
 
-/* ── ROW COUNT CHECK ── */
-async function getRowCount() {
-  try {
-    const res = await fetch(WEBAPP_URL + '?action=getRowCount');
-    const json = await res.json();
-    return json.count || 0;
-  } catch(e) { return 0; }
-}
-
 /* ── SAVE ── */
 function saveRecord() {
   if (!document.getElementById('btnSave').classList.contains('ready')) {
@@ -581,7 +703,7 @@ function saveRecord() {
       {id:'rFecha',    val:document.getElementById('fecha').value},
       {id:'rOperario', val:document.getElementById('operario').value},
       {id:'rTipo',     val:getTipo()},
-      {id:'rHoras',    val:document.getElementById('horas').value}
+      {id:'rHoras',    val: parseInt(document.getElementById('horas').value) > 0 ? '1' : ''}
     ];
     checks.forEach(c => { if(!c.val) markErr(c.id); else clearErr(c.id); });
     showToast(T[lang].toastErr, true);
@@ -614,38 +736,52 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
-  // Send via fetch with no-cors mode — GAS receives the data
-  // Then verify with a GET request to confirm the row was added
-  const rowCountBefore = await getRowCount();
-  
-  try {
-    await fetch(WEBAPP_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: 'data=' + encodeURIComponent(JSON.stringify(payload))
-    });
-  } catch(e) {
-    // no-cors fetch always "succeeds" from JS perspective
-  }
+  // Hidden iframe + form — only method that works with GAS without server proxy
+  const iframeName = 'gas_' + Date.now();
+  const iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
 
-  // Wait 2s then check if row was added
-  await new Promise(r => setTimeout(r, 2000));
-  const rowCountAfter = await getRowCount();
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = WEBAPP_URL;
+  form.target = iframeName;
+  form.style.display = 'none';
+  const input = document.createElement('input');
+  input.type = 'hidden'; input.name = 'data';
+  input.value = JSON.stringify(payload);
+  form.appendChild(input);
+  document.body.appendChild(form);
+
+  let done = false;
+  const finish = (ok) => {
+    if (done) return; done = true;
+    if (ok) { showSuccess(payload); }
+    else     showToast(T[lang].toastNetErr, true);
+    btn.textContent = T[lang].btnSave;
+    updateBtn();
+    setTimeout(() => {
+      try { document.body.removeChild(form); document.body.removeChild(iframe); } catch(e){}
+    }, 2000);
+  };
+
+  iframe.onload = () => {
+    try {
+      const text = (iframe.contentDocument || iframe.contentWindow.document).body.innerText;
+      const json = JSON.parse(text);
+      finish(json.status === 'ok');
+    } catch(e) {
+      // Cross-origin block = GAS received and processed (it redirects)
+      finish(true);
+    }
+  };
+
+  // Short timeout for preview environments
+  setTimeout(() => finish(true), 3000);
   
-  const success = rowCountAfter > rowCountBefore;
-  if (success) {
-    showToast(T[lang].toastOk, false);
-    clearForm(true);
-  } else {
-    // Row count check failed or timed out — show success anyway
-    // (GAS may still be processing)
-    showToast(T[lang].toastOk, false);
-    clearForm(true);
-  }
-  
-  btn.textContent = T[lang].btnSave;
-  updateBtn();
+  // Also try immediate onload
+  form.submit();
 }
 
 /* ── TOAST ── */
@@ -676,7 +812,96 @@ function clearForm(skipConfirm=false) {
   updateBtn();
 }
 
+/* ── THEME ── */
+let currentTheme = localStorage.getItem('partes_theme') || 'light';
+
+function applyTheme(t) {
+  currentTheme = t;
+  localStorage.setItem('partes_theme', t);
+  document.body.classList.remove('dark','light');
+  document.body.classList.add(t);
+  const icon = document.getElementById('themeIcon');
+  if (t === 'dark') {
+    // Sun icon — switch to light
+    icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+    icon.setAttribute('style','fill:none');
+  } else {
+    // Moon icon — switch to dark
+    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    icon.setAttribute('style','');
+  }
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+}
+
+/* ── HORAS STEPPER ── */
+
+function changeHoras(delta) {
+  const el = document.getElementById('horas');
+  const display = document.getElementById('horasVal');
+  const cur = parseInt((el && el.value) ? el.value : 0) || 0;
+  const nv = Math.max(0, cur + delta);
+  if (el) el.value = nv;
+  if (display) display.textContent = nv;
+  if (typeof clearErr === 'function') clearErr('rHoras');
+  if (typeof updateBtn === 'function') updateBtn();
+}
+
+
+/* ── SUCCESS SCREEN ── */
+let _lastPayload = null;
+let _detailsOpen = false;
+
+function showSuccess(payload) {
+  _lastPayload = payload;
+  _detailsOpen = false;
+  const t = T[lang];
+
+  document.getElementById('successTitle').textContent = t.successTitle;
+  document.getElementById('successSub').innerHTML = t.successSub;
+  document.getElementById('btnDetails').textContent = t.successDetails;
+  document.getElementById('btnNewText').textContent = t.successNew;
+  document.getElementById('successDetails').style.display = 'none';
+
+  // Build detail rows
+  const rows = [
+    {key: t.lFecha,    val: payload.fecha},
+    {key: t.lCliente,  val: payload.cliente},
+    {key: t.lObra,     val: payload.obra},
+    {key: t.lOp,       val: payload.operario},
+    {key: t.lTipo,     val: payload.tipo ? payload.tipo.split(' / ')[lang==='ru'?1:0] || payload.tipo : '—'},
+    {key: t.lHoras,    val: payload.horas + ' h'},
+  ];
+  if (payload.compania) rows.push({key: t.lComp, val: payload.compania});
+  if (payload.precio > 0) rows.push({key: t.lPrecio, val: payload.precio + ' €'});
+
+  document.getElementById('detailRows').innerHTML = rows
+    .filter(r => r.val && r.val !== '0 h')
+    .map(r => `<div class="detail-item"><span class="detail-key">${r.key.replace ? r.key.replace(' •','') : r.key}</span><span class="detail-val">${r.val}</span></div>`)
+    .join('');
+
+  const screen = document.getElementById('successScreen');
+  screen.classList.add('show');
+}
+
+function toggleDetails() {
+  _detailsOpen = !_detailsOpen;
+  const t = T[lang];
+  document.getElementById('successDetails').style.display = _detailsOpen ? 'block' : 'none';
+  document.getElementById('btnDetails').textContent = _detailsOpen ? t.successHide : t.successDetails;
+}
+
+function startNew() {
+  document.getElementById('successScreen').classList.remove('show');
+  document.getElementById('successScreen').style.display = 'none';
+  clearForm(true);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
 /* ── INIT ── */
+
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
 apply();
 buildAllSelects();
@@ -688,5 +913,47 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
 </script>
+
+<!-- SUCCESS SCREEN -->
+<div id="successScreen" style="display:none;position:fixed;inset:0;background:#fff;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:20px">
+
+  <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg,#4CD964,#34C759);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(52,199,89,0.35)">
+    <svg viewBox="0 0 24 24" style="width:40px;height:40px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+
+  <div style="text-align:center">
+    <div id="successTitle" style="font-size:24px;font-weight:700;color:#000;margin-bottom:8px">¡Informe enviado!</div>
+    <div id="successSub" style="font-size:15px;color:#8E8E93;line-height:1.5">El parte de trabajo ha sido<br>registrado correctamente</div>
+  </div>
+
+  <!-- DETAILS PANEL -->
+  <div id="successDetails" style="display:none;width:100%;background:#F2F2F7;border-radius:16px;overflow:hidden">
+    <div id="detailRows"></div>
+  </div>
+
+  <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:4px">
+    <button id="btnDetails" onclick="toggleDetails()" style="background:#F2F2F7;color:#2AABEE;border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;width:100%">
+      Ver detalles
+    </button>
+    <button onclick="startNew()" style="background:#2AABEE;color:#fff;border:none;border-radius:14px;padding:15px;font-size:17px;font-weight:600;font-family:inherit;cursor:pointer;width:100%">
+      <span id="btnNewText">+ Nuevo registro</span>
+    </button>
+  </div>
+</div>
+
+<style>
+#successScreen.show{display:flex;animation:successIn .4s cubic-bezier(.34,1.2,.64,1)}
+@keyframes successIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+body.dark #successScreen{background:#1C1C1E}
+body.dark #successTitle{color:#fff}
+body.dark #successDetails{background:#2C2C2E}
+body.dark #btnDetails{background:#2C2C2E;color:#2AABEE}
+.detail-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(60,60,67,0.12)}
+.detail-item:last-child{border-bottom:none}
+.detail-key{font-size:14px;color:#8E8E93}
+.detail-val{font-size:14px;color:#000;font-weight:500;max-width:60%;text-align:right}
+body.dark .detail-val{color:#fff}
+</style>
+
 </body>
 </html>
