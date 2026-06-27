@@ -3,280 +3,178 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="PARTE">
-<meta name="theme-color" content="#F2F2F7"><meta name="theme-color" media="(prefers-color-scheme:light)" content="#F2F2F7"><meta name="theme-color" media="(prefers-color-scheme:dark)" content="#000000">
+<meta name="theme-color" content="#F2F2F7">
 <title>Parte de Trabajo</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="shortcut icon" href="favicon.png">
 
-
 <script>
-const WEBAPP_URL   = "https://script.google.com/macros/s/AKfycbxjyy_jkIaRHGz1VHo0GOVn47hZUpmE77H_RJZedf8ftbbEe8UO5oqnqVnfqBF5j_uJig/exec";
-const CLIENTES     = ["CASA FUSTER","PROCOIN","FALCK"];
-const OBRAS        = ["ORIGINAL","CENTRO","LA MASIA","SANT QUIRZE","FALCK BASE"];
-const OPERARIOS    = ["MOHA","ABDEL","ALI","YASSINE","LASHEN"];
-const COMPANIAS    = ["OBRAMAT","FERROS CASANOVAS","SALTOKI"];
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyHt8IdYheoEaHuBS23ggbr3d4oqtL_MtcIXk8UyYYeQgpMOZ6iQusB7Jcez5H36M3P/exec";
 const PRICE_PER_HOUR = 28;
+const CLIENTES  = ["CASA FUSTER","PROCOIN","FALCK"];
+const OBRAS     = ["ORIGINAL","CENTRO","LA MASIA","SANT QUIRZE","FALCK BASE"];
+const OPERARIOS = ["MOHA","ABDEL","ALI","YASSINE","LASHEN"];
+const COMPANIAS = ["OBRAMAT","FERROS CASANOVAS","SALTOKI"];
+const TIPOS = [
+  "Construcción / Строительные работы",
+  "Demolición / Демонтаж",
+  "Movimiento de tierras / Земляные работы",
+  "Instalaciones / Инженерные работы",
+  "Acabados / Отделочные работы",
+  "Impermeabilización / Гидроизоляционные работы",
+  "Limpieza / Уборка",
+  "Transporte / Транспортировка",
+  "Carga y descarga / Погрузка и разгрузка",
+  "Montaje / Монтаж",
+  "Desmontaje / Демонтаж оборудования",
+  "Mantenimiento / Техническое обслуживание",
+  "Inspección y control / Проверка и контроль",
+  "Replanteo / Разбивочные работы",
+  "Otros / Прочие работы"
+];
+
+// JSONP callback for list sync
+function _gasCallback(json) {
+  try {
+    if (!json || json.status !== 'ok' || !json.data) return;
+    var d = json.data;
+    if (d.clientes  && d.clientes.length)  { CLIENTES.length=0;  d.clientes.forEach(function(v){CLIENTES.push(v);}); }
+    if (d.obras     && d.obras.length)     { OBRAS.length=0;     d.obras.forEach(function(v){OBRAS.push(v);}); }
+    if (d.operarios && d.operarios.length) { OPERARIOS.length=0; d.operarios.forEach(function(v){OPERARIOS.push(v);}); }
+    if (d.companias && d.companias.length) { COMPANIAS.length=0; d.companias.forEach(function(v){COMPANIAS.push(v);}); }
+    if (d.tipos     && d.tipos.length)     { TIPOS.length=0;     d.tipos.forEach(function(v){TIPOS.push(v);}); }
+    buildAllSelects();
+    try { localStorage.setItem('partes_lists', JSON.stringify(d)); } catch(e){}
+    console.log('Lists synced');
+  } catch(e) { console.log('Sync error:', e.message); }
+}
 </script>
 
 <style>
-:root{
-  --bg:#F2F2F7;
-  --card:#FFFFFF;
-  --sep:rgba(60,60,67,0.15);
-  --text:#000;
-  --gray:#8E8E93;
-  --ph:#C8C8CE;
-  --blue:#2AABEE;
-  --green:#34C759;
-  --orange:#FF9500;
-  --teal:#32ADE6;
-  --red:#FF3B30;
-  --purple:#AF52DE;
-}
+:root{--bg:#F2F2F7;--card:#fff;--sep:rgba(60,60,67,0.12);--text:#000;--gray:#8E8E93;--ph:#C7C7CC;--blue:#2AABEE;--green:#34C759;--red:#FF3B30;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{background:#F2F2F7;min-height:100vh;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;-webkit-font-smoothing:antialiased}
-body{padding-bottom:calc(env(safe-area-inset-bottom,34px)+48px)}
+html,body{background:#F2F2F7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;-webkit-font-smoothing:antialiased}
+body{padding-bottom:calc(env(safe-area-inset-bottom,0px)+56px)}
 
-/* NAV */
-.nav{
-  background:rgba(242,242,247,0.95);
-  backdrop-filter:saturate(180%) blur(24px);
-  -webkit-backdrop-filter:saturate(180%) blur(24px);
-  padding:14px 20px 10px;
-  padding-top:max(14px,env(safe-area-inset-top));
-  border-bottom:0.5px solid var(--sep);
-  position:sticky;top:0;z-index:100
-}
-.nav-row{display:flex;align-items:center;justify-content:space-between}
-.nav-title{font-size:30px;font-weight:700;color:var(--text);letter-spacing:-0.4px;flex:1;text-align:center}
-
-/* GLOBE BUTTON */
-.globe-btn{
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(42,171,238,0.15);
-  border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;position:relative
-}
+.nav{background:rgba(242,242,247,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 20px 10px;padding-top:max(14px,env(safe-area-inset-top));border-bottom:0.5px solid var(--sep);position:sticky;top:0;z-index:100}
+.nav-row{display:flex;align-items:center}
+.nav-title{font-size:30px;font-weight:700;color:#000;letter-spacing:-0.4px;flex:1;text-align:center}
+.nav-btn{width:34px;height:34px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.globe-btn{background:rgba(42,171,238,0.15)}
 .globe-btn svg{width:20px;height:20px;stroke:#2AABEE;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.theme-btn{
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(0,0,0,0.08);
-  border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0
-}
-.theme-btn svg{width:18px;height:18px;stroke:#555;fill:#555;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-body.dark .theme-btn{background:rgba(255,255,255,0.12)}
-body.dark .theme-btn svg{stroke:#FFD60A;fill:#FFD60A}
-.lang-dropdown{
-  display:none;position:absolute;top:42px;right:0;
-  background:rgba(255,255,255,0.97);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-radius:14px;overflow:hidden;min-width:150px;
-  box-shadow:0 8px 28px rgba(0,0,0,0.16);z-index:200
-}
+
+.lang-dropdown{display:none;position:absolute;top:42px;right:0;background:rgba(255,255,255,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:14px;overflow:hidden;min-width:150px;box-shadow:0 8px 28px rgba(0,0,0,0.16);z-index:200}
 .lang-dropdown.open{display:block}
-.lang-opt{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 16px;font-size:15px;color:var(--text);
-  cursor:pointer;border-bottom:0.5px solid var(--sep);
-  font-family:inherit;background:none;
-  border-left:none;border-right:none;border-top:none;
-  width:100%;text-align:left
-}
+.lang-opt{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:15px;color:#000;cursor:pointer;border-bottom:0.5px solid var(--sep);font-family:inherit;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left}
 .lang-opt:last-child{border-bottom:none}
-.lang-opt:active{background:rgba(0,0,0,0.05)}
 .lang-opt.active{color:var(--blue);font-weight:600}
 
-/* SECTION LABEL */
-.slabel{
-  font-size:13px;font-weight:400;color:var(--gray);
-  text-transform:uppercase;letter-spacing:0.3px;
-  padding:22px 20px 6px
-}
-.req-badge{font-size:11px;color:var(--red);font-weight:600;margin-left:4px;text-transform:none}
+.slabel{font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:0.4px;padding:18px 20px 6px;display:flex;align-items:center}
+.req-badge{font-size:10px;color:var(--red);font-weight:600;margin-left:auto;text-transform:none;letter-spacing:0}
 
-/* CARD — Telegram style */
-.card{
-  background:var(--card);
-  border-radius:16px;
-  margin:0 16px;
-  overflow:hidden
-}
-
-/* ROW */
-.row{
-  display:flex;align-items:center;
-  padding:0 16px;min-height:52px;
-  border-bottom:0.5px solid var(--sep)
-}
+.card{background:#fff;border-radius:14px;margin:0 16px;overflow:hidden}
+.row{display:flex;align-items:center;padding:0 14px;min-height:50px;border-bottom:0.5px solid var(--sep)}
 .row:last-child{border-bottom:none}
 
-/* ICON BADGE — Telegram style square with gradient */
-.rbadge{
-  width:32px;height:32px;border-radius:8px;
-  display:flex;align-items:center;justify-content:center;
-  margin-right:14px;flex-shrink:0;color:#fff
-}
-.b-blue   {background:linear-gradient(150deg,#4FC3F7 0%,#2AABEE 100%)}
-.b-green  {background:linear-gradient(150deg,#66BB6A 0%,#34C759 100%)}
-.b-orange {background:linear-gradient(150deg,#FFA726 0%,#FF9500 100%)}
-.b-teal   {background:linear-gradient(150deg,#4DD0E1 0%,#00ACC1 100%)}
-.b-purple {background:linear-gradient(150deg,#CE93D8 0%,#9C27B0 100%)}
-.b-red    {background:linear-gradient(150deg,#EF5350 0%,#E53935 100%)}
-.rbadge svg{width:17px;height:17px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.rbadge{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0;color:#fff}
+.b-blue{background:linear-gradient(145deg,#4FC3F7,#2AABEE)}
+.b-green{background:linear-gradient(145deg,#66BB6A,#34C759)}
+.b-orange{background:linear-gradient(145deg,#FFA726,#FF9500)}
+.b-teal{background:linear-gradient(145deg,#4DD0E1,#00ACC1)}
+.rbadge svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* LABEL */
-.rlabel{
-  font-size:16px;color:var(--text);
-  flex-shrink:0;display:flex;align-items:center;gap:5px
-}
-.req-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--red);display:inline-block;flex-shrink:0
-}
+.rlabel{font-size:16px;color:#000;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.req-dot{width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0}
 
-/* VALUE (right side) */
-.rval{
-  display:flex;align-items:center;gap:4px;
-  margin-left:auto;flex-shrink:0
-}
-.rinput{
-  font-size:16px;color:var(--text);
-  border:none;outline:none;background:transparent;
-  font-family:inherit;text-align:right;min-width:0;max-width:180px
-}
+.rinput{flex:1;text-align:right;font-size:16px;color:#000;border:none;outline:none;background:transparent;font-family:inherit;min-width:0}
 .rinput::placeholder{color:var(--ph)}
-input[type=date].rinput{color:var(--text);-webkit-appearance:none}
-.rselect{
-  font-size:16px;color:var(--gray);
-  border:none;outline:none;background:transparent;
-  font-family:inherit;-webkit-appearance:none;
-  cursor:pointer;text-align:right;
-  direction:rtl;max-width:180px
-}
-.rselect option{direction:ltr}
-.rselect.has-val{color:var(--text)}
-/* chevron */
-.rchev svg{width:8px;height:14px;stroke:#C8C8CE;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-left:4px}
+input[type=date].rinput{-webkit-appearance:none}
 
-/* TEXTAREA */
-.tarow{flex-direction:column;align-items:flex-start;padding:14px 16px;min-height:auto}
-.tarow .rlabel{margin-bottom:8px;font-size:14px;color:var(--gray);font-weight:500;text-transform:uppercase;letter-spacing:0.3px}
-.rta{width:100%;border:none;outline:none;background:transparent;font-size:16px;color:var(--text);font-family:inherit;resize:none;min-height:72px;line-height:1.6}
+.rselect{flex:1;text-align:right;font-size:15px;color:var(--gray);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;min-width:0}
+.rselect.has-val{color:#000}
+.rchev{color:var(--ph);margin-left:6px;flex-shrink:0;width:8px;height:14px}
+.rchev svg{width:8px;height:14px;stroke:var(--ph);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+.tarow{flex-direction:column;align-items:flex-start;padding:12px 14px;min-height:auto}
+.tarow .sub-label{font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:7px;font-weight:500}
+.rta{width:100%;border:none;outline:none;background:transparent;font-size:16px;color:#000;font-family:inherit;resize:none;min-height:70px;line-height:1.6}
 .rta::placeholder{color:var(--ph)}
 
-/* PHOTOS */
-.photo-wrap{padding:12px 16px 16px;border-top:0.5px solid var(--sep)}
-.photo-sublabel{font-size:12px;color:var(--gray);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:10px;font-weight:500}
-.photo-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+.photo-wrap{padding:10px 14px 12px;border-top:0.5px solid var(--sep)}
+.photo-sublabel{font-size:11px;color:var(--gray);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;font-weight:500}
+.photo-scroll{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
 .photo-scroll::-webkit-scrollbar{display:none}
-.photo-add-btn{
-  width:70px;height:70px;border-radius:14px;
-  background:rgba(42,171,238,0.1);
-  border:1.5px dashed rgba(42,171,238,0.4);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;gap:5px
-}
-.photo-add-btn svg{width:24px;height:24px;stroke:#2AABEE;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.photo-add-btn span{font-size:11px;color:#2AABEE;font-weight:500}
+.photo-add-btn{width:68px;height:68px;border-radius:12px;background:rgba(42,171,238,0.08);border:1.5px dashed rgba(42,171,238,0.35);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;gap:4px}
+.photo-add-btn svg{width:22px;height:22px;stroke:#2AABEE;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.photo-add-btn span{font-size:10px;color:#2AABEE;font-weight:500}
 .photo-thumb{position:relative;flex-shrink:0}
-.photo-thumb img{width:70px;height:70px;border-radius:14px;object-fit:cover;display:block}
-.photo-del{position:absolute;top:-5px;right:-5px;width:20px;height:20px;border-radius:50%;background:var(--red);border:2px solid var(--bg);color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600}
+.photo-thumb img{width:68px;height:68px;border-radius:12px;object-fit:cover;display:block}
+.photo-del{position:absolute;top:-5px;right:-5px;width:20px;height:20px;border-radius:50%;background:var(--red);border:2px solid #F2F2F7;color:#fff;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:600}
 input[type=file]{display:none}
 
-/* MODE HEADER (Tipo / Compañía) */
-.mode-header{
-  display:flex;align-items:center;
-  padding:0 16px;min-height:52px;
-  border-bottom:0.5px solid var(--sep)
-}
-.mode-toggle{
-  display:flex;background:rgba(118,118,128,0.12);
-  border-radius:9px;padding:2px;gap:1px;margin-left:auto
-}
-.ct{
-  font-size:13px;font-weight:500;padding:5px 14px;
-  border-radius:7px;border:none;cursor:pointer;
-  background:transparent;color:var(--gray);font-family:inherit
-}
-.ct.on{background:#fff;color:#2AABEE;box-shadow:0 1px 3px rgba(0,0,0,0.12)}
-.mode-list-row{
-  display:flex;align-items:center;
-  padding:0 16px;min-height:46px;
-  border-bottom:0.5px solid var(--sep)
-}
+.mode-header{display:flex;align-items:center;padding:0 14px;min-height:50px;border-bottom:0.5px solid var(--sep)}
+.mode-toggle{display:flex;background:rgba(118,118,128,0.12);border-radius:9px;padding:2px;gap:1px;margin-left:auto}
+.ct{font-size:13px;font-weight:500;padding:5px 14px;border-radius:7px;border:none;cursor:pointer;background:transparent;color:var(--gray);font-family:inherit}
+.ct.on{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(0,0,0,0.12)}
+.mode-list-row{display:flex;align-items:center;padding:0 14px;min-height:46px;border-bottom:0.5px solid var(--sep)}
 .mode-list-row:last-child{border-bottom:none}
-.mode-text-row{padding:12px 16px;border-bottom:0.5px solid var(--sep);display:none}
-.mode-text-input{
-  width:100%;border:none;outline:none;background:transparent;
-  font-size:16px;color:var(--text);font-family:inherit;
-  padding-bottom:4px;border-bottom:1.5px solid #2AABEE
-}
+.mode-text-row{padding:10px 14px;border-bottom:0.5px solid var(--sep);display:none}
+.mode-text-input{width:100%;border:none;outline:none;background:transparent;font-size:16px;color:#000;font-family:inherit;padding-bottom:3px;border-bottom:1.5px solid var(--blue)}
 .mode-text-input::placeholder{color:var(--ph)}
 
-/* HORAS STEPPER */
-.horas-stepper{display:flex;align-items:center;gap:10px;margin-left:auto;width:140px;justify-content:flex-end;flex-shrink:0}
+.horas-wrap{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
 .step-btn{width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:300;line-height:1}
-.step-btn:active{opacity:.7}
-.step-minus{background:rgba(118,118,128,0.18);color:var(--text)}
-.step-plus{background:#2AABEE;color:#fff}
-.horas-num{font-size:22px;font-weight:600;color:var(--text);min-width:32px;text-align:center}
+.step-minus{background:rgba(118,118,128,0.15);color:#000}
+.step-plus{background:var(--blue);color:#fff}
+.horas-display{position:relative;width:44px;height:36px;display:flex;align-items:center;justify-content:center}
+.horas-num{font-size:22px;font-weight:600;color:#000;pointer-events:none;position:relative;z-index:1}
+.horas-input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;font-size:16px;border:none;background:transparent;text-align:center}
 
-
-/* ERRORS */
 .row.err-field,.mode-header.err-field{background:#FFF2F2}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
 .err-field .req-dot{animation:pulse 1.2s ease infinite}
 
-/* BUTTONS */
-.btn-save{
-  display:block;width:calc(100% - 32px);margin:24px 16px 8px;
-  background:var(--ph);color:#fff;border:none;border-radius:14px;
-  padding:15px;font-size:17px;font-weight:600;font-family:inherit;
-  cursor:not-allowed;transition:background .2s,transform .1s
-}
-.btn-save.ready{background:#2AABEE;cursor:pointer}
+.btn-save{display:block;width:calc(100% - 32px);margin:22px 16px 7px;background:var(--ph);color:#fff;border:none;border-radius:14px;padding:15px;font-size:17px;font-weight:600;font-family:inherit;cursor:not-allowed;transition:background .2s}
+.btn-save.ready{background:var(--blue);cursor:pointer}
 .btn-save.ready:active{opacity:.88;transform:scale(.98)}
-.btn-clear{display:block;width:calc(100% - 32px);margin:0 16px 16px;text-align:center;font-size:15px;color:rgba(255,59,48,0.7);background:none;border:none;cursor:pointer;padding:8px;font-family:inherit}
+.btn-clear{display:block;width:calc(100% - 32px);margin:0 16px 16px;text-align:center;font-size:15px;color:rgba(255,59,48,0.6);background:none;border:none;cursor:pointer;padding:8px;font-family:inherit}
 
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:rgba(28,28,30,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;border-radius:14px;padding:12px 22px;font-size:14px;font-weight:500;white-space:nowrap;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:rgba(28,28,30,0.92);color:#fff;border-radius:14px;padding:12px 22px;font-size:14px;font-weight:500;white-space:nowrap;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
-@media (prefers-color-scheme:dark){
-  :root{--bg:#000000;--card:#2C2C2E;--sep:rgba(255,255,255,0.1);--text:#FFF;--gray:#8E8E93;--ph:#48484A}
-  .nav{background:rgba(28,28,30,0.9)}
-  .mode-toggle{background:rgba(255,255,255,0.1)}
-  .ct.on{background:#3A3A3C}
-  .lang-dropdown{background:rgba(44,44,46,0.97)}
-  .lang-opt{color:#fff}
-  .globe-btn{background:rgba(42,171,238,0.2)}
-  .step-minus{background:rgba(255,255,255,0.15);color:#fff}
-  .photo-add-btn{background:rgba(42,171,238,0.15)}
-}
+/* SUCCESS SCREEN */
+#successScreen{display:none;position:fixed;inset:0;background:#F2F2F7;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:20px}
+#successScreen.show{display:flex;animation:fadeIn .4s cubic-bezier(.34,1.2,.64,1)}
+@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.success-icon{width:88px;height:88px;border-radius:50%;background:linear-gradient(145deg,#5EDB74,#34C759);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 36px rgba(52,199,89,0.35)}
+.success-icon svg{width:44px;height:44px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.success-title{font-size:26px;font-weight:700;color:#000;text-align:center}
+.success-sub{font-size:16px;color:var(--gray);text-align:center;line-height:1.5}
+.success-details{width:100%;background:#fff;border-radius:16px;overflow:hidden;display:none}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:0.5px solid var(--sep)}
+.detail-row:last-child{border-bottom:none}
+.detail-key{font-size:14px;color:var(--gray)}
+.detail-val{font-size:14px;color:#000;font-weight:500;max-width:55%;text-align:right}
+.success-btns{width:100%;display:flex;flex-direction:column;gap:10px}
+.btn-details{background:#fff;color:var(--blue);border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;width:100%}
+.btn-new{background:var(--blue);color:#fff;border:none;border-radius:14px;padding:15px;font-size:17px;font-weight:600;font-family:inherit;cursor:pointer;width:100%}
 </style>
 </head>
-<body style="background:#F2F2F7 !important">
+<body>
 
 <nav class="nav">
   <div class="nav-row">
     <div style="width:34px"></div>
     <span class="nav-title" id="nTitle">Parte de trabajo</span>
-    <div style="display:flex;align-items:center;gap:8px;position:relative">
-      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Theme">
-        <svg id="themeIcon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-      </button>
-      <div style="position:relative">
-      <button class="globe-btn" onclick="toggleLang(event)" aria-label="Language">
+    <div style="position:relative">
+      <button class="nav-btn globe-btn" onclick="toggleLang(event)" aria-label="Language">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       </button>
       <div class="lang-dropdown" id="langDrop">
@@ -285,27 +183,28 @@ input[type=file]{display:none}
         <button class="lang-opt" id="optEn" onclick="setL('en')">🇬🇧 English</button>
       </div>
     </div>
-    </div>
   </div>
 </nav>
 
 <!-- IDENTIFICACIÓN -->
-<div class="slabel"><span id="s1lbl">Identificación</span><span style="flex:1"></span><span class="req-badge" id="s1req">• obligatorio</span></div>
+<div class="slabel"><span id="s1lbl">Identificación</span><span class="req-badge" id="s1req">• obligatorio</span></div>
 <div class="card">
   <div class="row" id="rCliente">
-    <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><path d="M3 21h18M9 21V7l7-4v18"/><path d="M12 8h1m-1 4h1m-1 4h1M9 8h1m-1 4h1m-1 4h1"/></svg></div>
+    <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></div>
     <span class="rlabel" id="lCliente">Cliente <span class="req-dot"></span></span>
-    <div class="rval"><select class="rselect" id="cliente" onchange="onSelChange(this,'rCliente')"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
+    <select class="rselect" id="cliente" onchange="onSel(this,'rCliente')"></select>
+    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="row" id="rObra">
     <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
     <span class="rlabel" id="lObra">Obra <span class="req-dot"></span></span>
-    <div class="rval"><select class="rselect" id="obra" onchange="onSelChange(this,'rObra')"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
+    <select class="rselect" id="obra" onchange="onSel(this,'rObra')"></select>
+    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="row" id="rFecha">
-    <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M16 3v4M8 3v4M4 11h16"/></svg></div>
+    <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
-    <div class="rval" style="margin-left:auto"><input type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;color:var(--text);text-align:right;-webkit-appearance:none;cursor:pointer;max-width:160px"></div>
+    <input class="rinput" type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()">
   </div>
 </div>
 
@@ -313,26 +212,27 @@ input[type=file]{display:none}
 <div class="slabel"><span id="s2lbl">Personal</span></div>
 <div class="card">
   <div class="row" id="rOperario">
-    <div class="rbadge b-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6 20.7a6 6 0 0 1 12 0"/></svg></div>
+    <div class="rbadge b-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg></div>
     <span class="rlabel" id="lOp">Operario <span class="req-dot"></span></span>
-    <div class="rval"><select class="rselect" id="operario" onchange="onSelChange(this,'rOperario')"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
+    <select class="rselect" id="operario" onchange="onSel(this,'rOperario')"></select>
+    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="row">
     <div class="rbadge b-green"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 11h6m-3-3v6"/></svg></div>
     <span class="rlabel" id="lAy">Ayudante</span>
-    <div class="rval"><select class="rselect" id="ayudante" onchange="this.classList.toggle('unselected',!this.value)"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
+    <select class="rselect" id="ayudante" onchange="this.classList.toggle('has-val',!!this.value)"></select>
+    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="row">
-    <div class="rbadge b-green"><svg viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14l3 4v4a2 2 0 0 1-2 2h-2"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg></div>
+    <div class="rbadge b-green"><svg viewBox="0 0 24 24"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M5 17H3v-6l2-5h12l2 5v6h-2M5 17h10M3 11h18"/></svg></div>
     <span class="rlabel" id="lVeh">Vehículo</span>
-    <input class="rinput" id="vehiculo" style="text-align:right;margin-left:auto">
+    <input class="rinput" id="vehiculo">
   </div>
 </div>
 
 <!-- TRABAJO -->
 <div class="slabel"><span id="s3lbl">Trabajo</span></div>
 <div class="card">
-  <!-- TIPO -->
   <div class="mode-header" id="rTipo">
     <div class="rbadge b-orange"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
     <span class="rlabel" id="lTipo">Tipo <span class="req-dot"></span></span>
@@ -341,38 +241,33 @@ input[type=file]{display:none}
       <button class="ct" id="ctTN" onclick="setTipoMode('new')">Otro</button>
     </div>
   </div>
-  <div class="mode-list-row" id="tipoListRow" style="justify-content:flex-end">
-    <select class="rselect" id="tipo" style="text-align:right;font-size:15px;flex:1" onchange="onSelChange(this,'rTipo')"></select>
+  <div class="mode-list-row" id="tipoListRow">
+    <select class="rselect" id="tipo" style="flex:1;font-size:15px" onchange="onSel(this,'rTipo')"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="tipoTextRow">
     <input class="mode-text-input" id="tipoNew" oninput="clearErr('rTipo');updateBtn()">
   </div>
 
-  <!-- HORAS -->
-    <div class="row" id="rHoras" style="min-height:54px">
+  <div class="row" id="rHoras">
     <div class="rbadge b-orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
     <span class="rlabel" id="lHoras">Horas <span class="req-dot"></span></span>
-    <div style="display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0">
+    <div class="horas-wrap">
       <button class="step-btn step-minus" onclick="changeHoras(-1)">−</button>
-      <div style="position:relative;width:44px;height:36px;display:flex;align-items:center;justify-content:center">
-        <input type="number" id="horas" value="0" min="0" inputmode="numeric" pattern="[0-9]*"
-          style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;font-size:16px"
-          oninput="document.getElementById('horasVal').textContent=Math.max(0,parseInt(this.value)||0);this.value=Math.max(0,parseInt(this.value)||0);clearErr('rHoras');updateBtn()"
-          onchange="document.getElementById('horasVal').textContent=Math.max(0,parseInt(this.value)||0)">
-        <span class="horas-num" id="horasVal" style="pointer-events:none">0</span>
+      <div class="horas-display">
+        <span class="horas-num" id="horasVal">0</span>
+        <input type="number" class="horas-input" id="horas" value="0" min="0" inputmode="numeric"
+          oninput="var n=Math.max(0,parseInt(this.value)||0);this.value=n;document.getElementById('horasVal').textContent=n;updateBtn()">
       </div>
       <button class="step-btn step-plus" onclick="changeHoras(1)">+</button>
     </div>
   </div>
 
-  <!-- TRABAJOS REALIZADOS -->
   <div class="row tarow">
-    <span class="rlabel" id="lTrab" style="font-size:13px;color:var(--gray);text-transform:uppercase;letter-spacing:0.3px">Trabajos realizados</span>
+    <span class="sub-label" id="lTrab">Trabajos realizados</span>
     <textarea class="rta" id="trabajos"></textarea>
   </div>
 
-  <!-- FOTOS DE OBRA -->
   <div class="photo-wrap">
     <div class="photo-sublabel" id="lFotosObra">Fotos de obra</div>
     <div class="photo-scroll" id="photosObra">
@@ -388,10 +283,8 @@ input[type=file]{display:none}
 <!-- MATERIALES -->
 <div class="slabel"><span id="s5lbl">Materiales</span></div>
 <div class="card">
-
-  <!-- COMPAÑÍA -->
   <div class="mode-header">
-    <div class="rbadge b-teal"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M3 9a4 4 0 0 0 8 0 4 4 0 0 0 8 0"/><path d="M5 21V9m14 12V9M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6H9z"/></svg></div>
+    <div class="rbadge b-teal"><svg viewBox="0 0 24 24"><path d="M3 9l1-5h16l1 5"/><path d="M3 9a4 4 0 0 0 8 0 4 4 0 0 0 8 0"/><path d="M5 21V9m14 12V9M9 21v-6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v6"/></svg></div>
     <span class="rlabel" id="lComp">Compañía</span>
     <div class="mode-toggle">
       <button class="ct on" id="ctCL" onclick="setCompMode('list')">Lista</button>
@@ -399,28 +292,28 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="mode-list-row" id="compListRow">
-    <div class="rval"><select class="rselect" id="compania" style="width:100%;text-align:right"
-      onchange="this.classList.toggle('unselected',!this.value)"></select><span class="rchev"><svg viewBox="0 0 8 14"><path d="M1 1l6 6-6 6"/></svg></span></div>
+    <select class="rselect" id="compania" style="flex:1" onchange="this.classList.toggle('has-val',!!this.value)"></select>
+    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="compTextRow">
     <input class="mode-text-input" id="companiaNew">
   </div>
 
-  <!-- DESCRIPCIÓN -->
-  <div class="row tarow" style="border-top:0.5px solid rgba(60,60,67,0.1)">
-    <span class="rlabel" id="lMat">Materiales utilizados</span>
+  <div class="row tarow">
+    <span class="sub-label" id="lMat">Materiales utilizados</span>
     <textarea class="rta" id="materiales"></textarea>
   </div>
 
-  <!-- PRECIO -->
-    <div class="row">
+  <div class="row">
     <div class="rbadge b-teal"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.4a4 4 0 1 0 .1 5.2M8.5 11h5m-5 2h5"/></svg></div>
     <span class="rlabel" id="lPrecio">Precio</span>
-    <input class="rinput" type="number" id="precio" min="0" step="0.01" inputmode="decimal" placeholder="—" style="text-align:right;margin-left:auto;max-width:120px">
-    <span style="font-size:15px;color:var(--gray);margin-left:4px;flex-shrink:0">€</span>
+    <div style="display:flex;align-items:center;gap:4px;margin-left:auto">
+      <input type="number" id="precio" min="0" step="0.01" inputmode="decimal" placeholder="0.00"
+        style="border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;color:#000;text-align:right;width:80px;-webkit-appearance:none">
+      <span style="font-size:15px;color:var(--gray);flex-shrink:0">€</span>
+    </div>
   </div>
 
-  <!-- FOTOS MATERIALES -->
   <div class="photo-wrap">
     <div class="photo-sublabel" id="lFotosMat">Fotos / recibo</div>
     <div class="photo-scroll" id="photosMat">
@@ -435,199 +328,153 @@ input[type=file]{display:none}
 
 <button class="btn-save" id="btnSave" onclick="saveRecord()">Guardar registro</button>
 <button class="btn-clear" id="btnClear" onclick="clearForm()">Borrar todo</button>
-
 <div class="toast" id="toast"></div>
+
+<!-- SUCCESS SCREEN -->
+<div id="successScreen">
+  <div class="success-icon">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div>
+    <div class="success-title" id="successTitle">¡Informe enviado!</div>
+    <div class="success-sub" id="successSub">El parte ha sido registrado correctamente</div>
+  </div>
+  <div class="success-details" id="successDetails">
+    <div id="detailRows"></div>
+  </div>
+  <div class="success-btns">
+    <button class="btn-details" id="btnDetails" onclick="toggleDetails()">Ver detalles</button>
+    <button class="btn-new" id="btnNew" onclick="startNew()">+ Nuevo registro</button>
+  </div>
+</div>
 
 <script>
 /* ── TRANSLATIONS ── */
-const T = {
-  es:{
-    title:'Parte de trabajo', s1:'Identificación', s1req:'• obligatorio',
-    s2:'Personal', s3:'Trabajo', s5:'Materiales',
-    lCliente:'Cliente', lObra:'Obra', lFecha:'Fecha',
-    lOp:'Operario', lAy:'Ayudante', lVeh:'Vehículo',
-    lTipo:'Tipo', lHoras:'Horas', lTrab:'Trabajos realizados',
-    lComp:'Compañía', lMat:'Materiales utilizados', lPrecio:'Precio',
-    lFotosObra:'Fotos de obra', lFotosMat:'Fotos / recibo',
-    addO:'Foto', addM:'Recibo',
-    btnSave:'Guardar registro', btnClear:'Borrar todo',
-    toastOk:'Registro guardado ✓', toastErr:'Rellena los campos obligatorios',
-    toastSending:'Enviando...', toastNetErr:'Error de conexión',
-    ctList:'Lista', ctOtro:'Otro', ctNew:'Nueva',
-    selPh:'Seleccione', ayNone:'Sin ayudante',
-    vehPh:'Matrícula / modelo', tipoNewPh:'Describir tipo...',
-    compPh:'Nombre de la compañía...', trabPh:'Describir los trabajos...',
-    matPh:'Listar materiales...', horasPh:'0', precPh:'0.00',
-    confirmClear:'¿Borrar todo?'
-  },
-  ru:{
-    title:'ОТЧЁТ', s1:'Идентификация', s1req:'• обязательно',
-    s2:'Персонал', s3:'Работы', s5:'Материалы',
-    lCliente:'Клиент', lObra:'Объект', lFecha:'Дата',
-    lOp:'Исполнитель', lAy:'Помощник', lVeh:'Транспорт',
-    lTipo:'Тип', lHoras:'Часы', lTrab:'Выполненные работы',
-    lComp:'Компания', lMat:'Использованные материалы', lPrecio:'Цена',
-    lFotosObra:'Фото объекта', lFotosMat:'Фото / чек',
-    addO:'Фото', addM:'Чек',
-    btnSave:'Сохранить запись', btnClear:'Очистить',
-    toastOk:'Запись сохранена ✓', toastErr:'Заполните обязательные поля',
-    toastSending:'Отправка...', toastNetErr:'Ошибка соединения',
-    ctList:'Список', ctOtro:'Другое', ctNew:'Новая',
-    selPh:'Выберите', ayNone:'Без помощника',
-    vehPh:'Номер / модель авто', tipoNewPh:'Описать тип...',
-    compPh:'Название компании...', trabPh:'Описать работы...',
-    matPh:'Перечислить материалы...', horasPh:'0', precPh:'0.00',
-    confirmClear:'Очистить все поля?'
-  },
-  en:{
-    title:'Work report', s1:'Identification', s1req:'• required',
-    s2:'Staff', s3:'Work', s5:'Materials',
-    lCliente:'Client', lObra:'Site', lFecha:'Date',
-    lOp:'Operative', lAy:'Assistant', lVeh:'Vehicle',
-    lTipo:'Type', lHoras:'Hours', lTrab:'Work performed',
-    lComp:'Company', lMat:'Materials used', lPrecio:'Price',
-    lFotosObra:'Site photos', lFotosMat:'Photos / receipt',
-    addO:'Photo', addM:'Receipt',
-    btnSave:'Save record', btnClear:'Clear all',
-    toastOk:'Record saved ✓', toastErr:'Fill in required fields',
-    toastSending:'Sending...', toastNetErr:'Connection error',
-    ctList:'List', ctOtro:'Other', ctNew:'New',
-    selPh:'Select', ayNone:'No assistant',
-    vehPh:'Plate / model', tipoNewPh:'Describe type...',
-    compPh:'Company name...', trabPh:'Describe work performed...',
-    matPh:'List materials...', horasPh:'0', precPh:'0.00',
-    confirmClear:'Clear everything?'
-  }
+var T = {
+  es:{title:'Parte de trabajo',s1:'Identificación',s1req:'• obligatorio',s2:'Personal',s3:'Trabajo',s5:'Materiales',
+    lCliente:'Cliente',lObra:'Obra',lFecha:'Fecha',lOp:'Operario',lAy:'Ayudante',lVeh:'Vehículo',
+    lTipo:'Tipo',lHoras:'Horas',lTrab:'Trabajos realizados',lComp:'Compañía',lMat:'Materiales utilizados',lPrecio:'Precio',
+    lFotosObra:'Fotos de obra',lFotosMat:'Fotos / recibo',addO:'Foto',addM:'Recibo',
+    btnSave:'Guardar registro',btnClear:'Borrar todo',
+    toastErr:'Rellena los campos obligatorios',toastSending:'Enviando...',toastNetErr:'Error de conexión',
+    ctList:'Lista',ctOtro:'Otro',ctNew:'Nueva',
+    selPh:'Seleccione',ayNone:'Sin ayudante',
+    vehPh:'Matrícula / modelo',tipoNewPh:'Describir tipo...',compPh:'Nombre de la compañía...',
+    trabPh:'Describir los trabajos...',matPh:'Listar materiales...',horasPh:'0',precPh:'—',
+    confirmClear:'¿Borrar todo?',
+    successTitle:'¡Informe enviado!',successSub:'El parte ha sido registrado correctamente',
+    successDetails:'Ver detalles',successHide:'Ocultar detalles',successNew:'+ Nuevo registro'},
+  ru:{title:'ОТЧЁТ',s1:'Идентификация',s1req:'• обязательно',s2:'Персонал',s3:'Работы',s5:'Материалы',
+    lCliente:'Клиент',lObra:'Объект',lFecha:'Дата',lOp:'Исполнитель',lAy:'Помощник',lVeh:'Транспорт',
+    lTipo:'Тип',lHoras:'Часы',lTrab:'Выполненные работы',lComp:'Компания',lMat:'Использованные материалы',lPrecio:'Цена',
+    lFotosObra:'Фото объекта',lFotosMat:'Фото / чек',addO:'Фото',addM:'Чек',
+    btnSave:'Сохранить запись',btnClear:'Очистить',
+    toastErr:'Заполните обязательные поля',toastSending:'Отправка...',toastNetErr:'Ошибка соединения',
+    ctList:'Список',ctOtro:'Другое',ctNew:'Новая',
+    selPh:'Выберите',ayNone:'Без помощника',
+    vehPh:'Номер / модель авто',tipoNewPh:'Описать тип...',compPh:'Название компании...',
+    trabPh:'Описать работы...',matPh:'Перечислить материалы...',horasPh:'0',precPh:'—',
+    confirmClear:'Очистить все поля?',
+    successTitle:'Отчёт отправлен!',successSub:'Наряд успешно зарегистрирован',
+    successDetails:'Подробнее',successHide:'Скрыть',successNew:'+ Новый отчёт'},
+  en:{title:'Work report',s1:'Identification',s1req:'• required',s2:'Staff',s3:'Work',s5:'Materials',
+    lCliente:'Client',lObra:'Site',lFecha:'Date',lOp:'Operative',lAy:'Assistant',lVeh:'Vehicle',
+    lTipo:'Type',lHoras:'Hours',lTrab:'Work performed',lComp:'Company',lMat:'Materials used',lPrecio:'Price',
+    lFotosObra:'Site photos',lFotosMat:'Photos / receipt',addO:'Photo',addM:'Receipt',
+    btnSave:'Save record',btnClear:'Clear all',
+    toastErr:'Fill in required fields',toastSending:'Sending...',toastNetErr:'Connection error',
+    ctList:'List',ctOtro:'Other',ctNew:'New',
+    selPh:'Select',ayNone:'No assistant',
+    vehPh:'Plate / model',tipoNewPh:'Describe type...',compPh:'Company name...',
+    trabPh:'Describe work...',matPh:'List materials...',horasPh:'0',precPh:'—',
+    confirmClear:'Clear everything?',
+    successTitle:'Report sent!',successSub:'Work report registered successfully',
+    successDetails:'View details',successHide:'Hide details',successNew:'+ New report'}
 };
-let lang = 'es';
+var lang = 'es';
 
 /* ── LANGUAGE ── */
-function toggleLang(e) {
-  e.stopPropagation();
-  document.getElementById('langDrop').classList.toggle('open');
-}
-document.addEventListener('click', () => document.getElementById('langDrop').classList.remove('open'));
+function toggleLang(e) { e.stopPropagation(); document.getElementById('langDrop').classList.toggle('open'); }
+document.addEventListener('click', function(){ document.getElementById('langDrop').classList.remove('open'); });
 
 function setL(l) {
   lang = l;
-  document.documentElement.lang = l === 'ru' ? 'ru' : l === 'en' ? 'en' : 'es';
+  document.documentElement.lang = l;
   document.getElementById('langDrop').classList.remove('open');
-  ['optEs','optRu','optEn'].forEach(id => document.getElementById(id).classList.remove('active'));
+  ['optEs','optRu','optEn'].forEach(function(id){ document.getElementById(id).classList.remove('active'); });
   document.getElementById(l==='es'?'optEs':l==='ru'?'optRu':'optEn').classList.add('active');
   apply();
   buildAllSelects();
 }
 
 function apply() {
-  const t = T[lang];
-  const simple = {
-    nTitle:'title', s1lbl:'s1', s1req:'s1req', s2lbl:'s2', s3lbl:'s3', s5lbl:'s5',
-    lFotosObra:'lFotosObra', lFotosMat:'lFotosMat',
-    addO:'addO', addM:'addM', btnSave:'btnSave', btnClear:'btnClear',
-    ctTL:'ctList', ctTN:'ctOtro', ctCL:'ctList', ctCN:'ctNew'
-  };
-  for (const [id, key] of Object.entries(simple)) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = t[key];
-  }
-  // Labels with req-dot
-  ['lCliente','lObra','lFecha','lOp','lTipo','lHoras'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.childNodes[0].textContent = t[id] + ' ';
+  var t = T[lang];
+  var map = {nTitle:'title',s1lbl:'s1',s1req:'s1req',s2lbl:'s2',s3lbl:'s3',s5lbl:'s5',
+    lFotosObra:'lFotosObra',lFotosMat:'lFotosMat',addO:'addO',addM:'addM',
+    btnSave:'btnSave',btnClear:'btnClear',ctTL:'ctList',ctTN:'ctOtro',ctCL:'ctList',ctCN:'ctNew'};
+  Object.keys(map).forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=t[map[id]]; });
+  ['lCliente','lObra','lFecha','lOp','lTipo','lHoras'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.childNodes[0].textContent=t[id]+' ';
   });
-  // Plain labels
-  ['lAy','lVeh','lTrab','lComp','lMat','lPrecio'].forEach(id => {
-    const el = document.getElementById(id); if(el) el.textContent = t[id];
+  ['lAy','lVeh','lTrab','lComp','lMat','lPrecio'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.textContent=t[id];
   });
-  // Placeholders
-  document.getElementById('vehiculo').placeholder  = t.vehPh;
-  document.getElementById('tipoNew').placeholder   = t.tipoNewPh;
+  document.getElementById('vehiculo').placeholder = t.vehPh;
+  document.getElementById('tipoNew').placeholder  = t.tipoNewPh;
   document.getElementById('companiaNew').placeholder = t.compPh;
   document.getElementById('trabajos').placeholder  = t.trabPh;
   document.getElementById('materiales').placeholder = t.matPh;
-  document.getElementById('horas').placeholder     = t.horasPh;
   document.getElementById('precio').placeholder    = t.precPh;
 }
 
-/* ── BUILD SELECTS ── */
-function buildSelect(id, items, placeholder, preserve=true) {
-  const sel = document.getElementById(id);
-  const prev = preserve ? sel.value : '';
+/* ── SELECTS ── */
+function buildSelect(id, items, ph, ayudante) {
+  var sel = document.getElementById(id);
+  var prev = sel.value;
   sel.innerHTML = '';
-  const ph = document.createElement('option');
-  ph.value = ''; ph.textContent = placeholder;
-  sel.appendChild(ph);
-  items.forEach(v => {
-    const o = document.createElement('option'); o.value = v; o.textContent = v; sel.appendChild(o);
-  });
-  if (prev) sel.value = prev;
+  var o = document.createElement('option'); o.value=''; o.textContent=ph; sel.appendChild(o);
+  items.forEach(function(v){ var op=document.createElement('option'); op.value=v; op.textContent=v; sel.appendChild(op); });
+  if (prev) { sel.value = prev; }
   sel.classList.toggle('has-val', !!sel.value);
 }
 
-const TIPOS = [
-  'Construcción / Строительные работы',
-  'Demolición / Демонтаж',
-  'Movimiento de tierras / Земляные работы',
-  'Instalaciones / Инженерные работы',
-  'Acabados / Отделочные работы',
-  'Impermeabilización / Гидроизоляционные работы',
-  'Limpieza / Уборка',
-  'Transporte / Транспортировка',
-  'Carga y descarga / Погрузка и разгрузка',
-  'Montaje / Монтаж',
-  'Desmontaje / Демонтаж оборудования',
-  'Mantenimiento / Техническое обслуживание',
-  'Inspección y control / Проверка и контроль',
-  'Replanteo / Разбивочные работы',
-  'Otros / Прочие работы'
-];
-
 function buildAllSelects() {
-  const t = T[lang];
+  var t = T[lang];
   buildSelect('cliente',  CLIENTES,  t.selPh);
   buildSelect('obra',     OBRAS,     t.selPh);
   buildSelect('operario', OPERARIOS, t.selPh);
-  buildSelect('ayudante', OPERARIOS, t.ayNone);
+  buildSelect('ayudante', OPERARIOS, t.ayNone, true);
   buildSelect('tipo',     TIPOS,     t.selPh);
   buildSelect('compania', COMPANIAS, t.selPh);
 }
 
-/* ── SYNC LISTS FROM SHEETS ── */
-async function syncLists() {
-  try {
-    const res  = await fetch(WEBAPP_URL + '?action=getLists');
-    const json = await res.json();
-    if (json.status !== 'ok' || !json.data) return;
-    const d = json.data;
-    if (d.clientes  && d.clientes.length)  { CLIENTES.length=0;  d.clientes.forEach(v=>CLIENTES.push(v)); }
-    if (d.obras     && d.obras.length)     { OBRAS.length=0;     d.obras.forEach(v=>OBRAS.push(v)); }
-    if (d.operarios && d.operarios.length) { OPERARIOS.length=0; d.operarios.forEach(v=>OPERARIOS.push(v)); }
-    if (d.companias && d.companias.length) { COMPANIAS.length=0; d.companias.forEach(v=>COMPANIAS.push(v)); }
-    if (d.tipos     && d.tipos.length) {
-      TIPOS.length = 0; d.tipos.forEach(v=>TIPOS.push(v));
-    }
-    buildAllSelects();
-    try { localStorage.setItem('partes_lists', JSON.stringify(d)); } catch(e){}
-    console.log('✅ Lists synced from Sheets');
-  } catch(e) {
-    console.log('Sync offline, using cache');
-    try {
-      const c = localStorage.getItem('partes_lists');
-      if (c) {
-        const d = JSON.parse(c);
-        if (d.clientes)  { CLIENTES.length=0;  d.clientes.forEach(v=>CLIENTES.push(v)); }
-        if (d.obras)     { OBRAS.length=0;     d.obras.forEach(v=>OBRAS.push(v)); }
-        if (d.operarios) { OPERARIOS.length=0; d.operarios.forEach(v=>OPERARIOS.push(v)); }
-        if (d.companias) { COMPANIAS.length=0; d.companias.forEach(v=>COMPANIAS.push(v)); }
-        if (d.tipos)     { TIPOS.length=0;     d.tipos.forEach(v=>TIPOS.push(v)); }
-        buildAllSelects();
-      }
-    } catch(e2){}
-  }
+/* ── SYNC LISTS (JSONP) ── */
+function syncLists() {
+  var old = document.getElementById('_gas_sync');
+  if (old) old.parentNode.removeChild(old);
+  var s = document.createElement('script');
+  s.id = '_gas_sync';
+  s.src = WEBAPP_URL + '?action=getLists&callback=_gasCallback&t=' + Date.now();
+  s.onerror = function() { loadCache(); };
+  document.head.appendChild(s);
 }
 
-/* ── MODE TOGGLES ── */
-let tipoMode = 'list', compMode = 'list';
+function loadCache() {
+  try {
+    var c = localStorage.getItem('partes_lists');
+    if (!c) return;
+    var d = JSON.parse(c);
+    if (d.clientes)  { CLIENTES.length=0;  d.clientes.forEach(function(v){CLIENTES.push(v);}); }
+    if (d.obras)     { OBRAS.length=0;     d.obras.forEach(function(v){OBRAS.push(v);}); }
+    if (d.operarios) { OPERARIOS.length=0; d.operarios.forEach(function(v){OPERARIOS.push(v);}); }
+    if (d.companias) { COMPANIAS.length=0; d.companias.forEach(function(v){COMPANIAS.push(v);}); }
+    if (d.tipos)     { TIPOS.length=0;     d.tipos.forEach(function(v){TIPOS.push(v);}); }
+    buildAllSelects();
+  } catch(e) {}
+}
+
+/* ── MODES ── */
+var tipoMode = 'list', compMode = 'list';
 
 function setTipoMode(m) {
   tipoMode = m;
@@ -635,7 +482,7 @@ function setTipoMode(m) {
   document.getElementById('ctTN').classList.toggle('on', m!=='list');
   document.getElementById('tipoListRow').style.display = m==='list' ? 'flex' : 'none';
   document.getElementById('tipoTextRow').style.display = m==='new'  ? 'block': 'none';
-  if(m==='list') document.getElementById('tipoNew').value='';
+  if (m==='list') document.getElementById('tipoNew').value='';
   else document.getElementById('tipo').selectedIndex=0;
   updateBtn();
 }
@@ -646,86 +493,76 @@ function setCompMode(m) {
   document.getElementById('ctCN').classList.toggle('on', m!=='list');
   document.getElementById('compListRow').style.display = m==='list' ? 'flex' : 'none';
   document.getElementById('compTextRow').style.display = m==='new'  ? 'block': 'none';
-  if(m==='list') document.getElementById('companiaNew').value='';
+  if (m==='list') document.getElementById('companiaNew').value='';
   else document.getElementById('compania').selectedIndex=0;
 }
 
-function getTipo() {
-  return tipoMode==='list'
-    ? document.getElementById('tipo').value
-    : document.getElementById('tipoNew').value.trim();
-}
-function getCompania() {
-  return compMode==='list'
-    ? document.getElementById('compania').value
-    : document.getElementById('companiaNew').value.trim();
-}
+function getTipo() { return tipoMode==='list' ? document.getElementById('tipo').value : document.getElementById('tipoNew').value.trim(); }
+function getComp()  { return compMode==='list'  ? document.getElementById('compania').value : document.getElementById('companiaNew').value.trim(); }
 
-/* ── SELECT CHANGE HANDLER ── */
-function onSelChange(el, rowId) {
-  el.classList.toggle('unselected', !el.value);
-  clearErr(rowId);
-  updateBtn();
-}
+/* ── VALIDATION ── */
+function onSel(el, rowId) { el.classList.toggle('has-val',!!el.value); clearErr(rowId); updateBtn(); }
+function markErr(id) { var el=document.getElementById(id); if(el) el.classList.add('err-field'); }
+function clearErr(id) { var el=document.getElementById(id); if(el) el.classList.remove('err-field'); }
 
-/* ── BUTTON STATE ── */
 function updateBtn() {
-  const horasVal = parseInt(document.getElementById('horas').value) || 0;
-  const ok = [
-    document.getElementById('cliente').value,
-    document.getElementById('obra').value,
-    document.getElementById('fecha').value,
-    document.getElementById('operario').value,
-    getTipo()
-  ].every(v => v && String(v).trim() !== '') && horasVal > 0;
+  var horas = parseInt(document.getElementById('horas').value)||0;
+  var ok = !!(document.getElementById('cliente').value &&
+              document.getElementById('obra').value &&
+              document.getElementById('fecha').value &&
+              document.getElementById('operario').value &&
+              getTipo() && horas > 0);
   document.getElementById('btnSave').classList.toggle('ready', ok);
 }
 
-/* ── ERROR ── */
-function markErr(id) { document.getElementById(id) && document.getElementById(id).classList.add('err-field'); }
-function clearErr(id) { document.getElementById(id) && document.getElementById(id).classList.remove('err-field'); }
+/* ── HORAS ── */
+function changeHoras(delta) {
+  var el = document.getElementById('horas');
+  var nv = Math.max(0, (parseInt(el.value)||0) + delta);
+  el.value = nv;
+  document.getElementById('horasVal').textContent = nv;
+  updateBtn();
+}
 
 /* ── PHOTOS ── */
 function addPhotos(input, gridId) {
-  const grid = document.getElementById(gridId);
-  Array.from(input.files).forEach(file => {
-    const url  = URL.createObjectURL(file);
-    const wrap = document.createElement('div');
-    wrap.className = 'photo-thumb'; wrap._file = file;
-    wrap.innerHTML = `<img src="${url}" alt="foto"><button class="photo-del" onclick="this.parentNode.remove()">×</button>`;
+  var grid = document.getElementById(gridId);
+  Array.from(input.files).forEach(function(file) {
+    var url = URL.createObjectURL(file);
+    var wrap = document.createElement('div'); wrap.className='photo-thumb'; wrap._file=file;
+    wrap.innerHTML = '<img src="'+url+'" alt="foto"><button class="photo-del" onclick="this.parentNode.remove()">×</button>';
     grid.insertBefore(wrap, grid.firstChild);
   });
   input.value = '';
 }
+
 function photoNames(gridId) {
   return Array.from(document.getElementById(gridId).querySelectorAll('.photo-thumb'))
-    .map(el => el._file ? el._file.name : '').filter(Boolean).join(', ');
+    .map(function(el){ return el._file ? el._file.name : ''; }).filter(Boolean).join(', ');
 }
 
 /* ── SAVE ── */
 function saveRecord() {
   if (!document.getElementById('btnSave').classList.contains('ready')) {
-    const checks = [
-      {id:'rCliente',  val:document.getElementById('cliente').value},
-      {id:'rObra',     val:document.getElementById('obra').value},
-      {id:'rFecha',    val:document.getElementById('fecha').value},
-      {id:'rOperario', val:document.getElementById('operario').value},
-      {id:'rTipo',     val:getTipo()},
-      {id:'rHoras',    val: parseInt(document.getElementById('horas').value) > 0 ? '1' : ''}
-    ];
-    checks.forEach(c => { if(!c.val) markErr(c.id); else clearErr(c.id); });
+    [{id:'rCliente',v:document.getElementById('cliente').value},
+     {id:'rObra',   v:document.getElementById('obra').value},
+     {id:'rFecha',  v:document.getElementById('fecha').value},
+     {id:'rOperario',v:document.getElementById('operario').value},
+     {id:'rTipo',   v:getTipo()},
+     {id:'rHoras',  v:(parseInt(document.getElementById('horas').value)||0)>0?'1':''}
+    ].forEach(function(c){ if(!c.v) markErr(c.id); else clearErr(c.id); });
     showToast(T[lang].toastErr, true);
     return;
   }
 
-  const btn = document.getElementById('btnSave');
-  btn.innerHTML = `<span class="spinner"></span>${T[lang].toastSending}`;
+  var btn = document.getElementById('btnSave');
+  btn.innerHTML = '<span class="spinner"></span>' + T[lang].toastSending;
   btn.classList.remove('ready');
 
-  const horas  = parseInt(document.getElementById('horas').value) || 0;
-  const precio = parseFloat(document.getElementById('precio').value) || 0;
+  var horas  = parseInt(document.getElementById('horas').value)||0;
+  var precio = parseFloat(document.getElementById('precio').value)||0;
 
-  const payload = {
+  var payload = {
     fecha:       document.getElementById('fecha').value,
     cliente:     document.getElementById('cliente').value,
     obra:        document.getElementById('obra').value,
@@ -735,7 +572,7 @@ function saveRecord() {
     trabajos:    document.getElementById('trabajos').value,
     tipo:        getTipo(),
     horas:       horas,
-    compania:    getCompania(),
+    compania:    getComp(),
     materiales:  document.getElementById('materiales').value,
     precio:      precio,
     total:       (horas * PRICE_PER_HOUR + precio).toFixed(2),
@@ -744,226 +581,127 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
-  // Hidden iframe + form — only method that works with GAS without server proxy
-  const iframeName = 'gas_' + Date.now();
-  const iframe = document.createElement('iframe');
-  iframe.name = iframeName;
-  iframe.style.display = 'none';
+  var iframeName = 'gas_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName; iframe.style.display='none';
   document.body.appendChild(iframe);
 
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = WEBAPP_URL;
-  form.target = iframeName;
-  form.style.display = 'none';
-  const input = document.createElement('input');
-  input.type = 'hidden'; input.name = 'data';
-  input.value = JSON.stringify(payload);
-  form.appendChild(input);
-  document.body.appendChild(form);
+  var form = document.createElement('form');
+  form.method='POST'; form.action=WEBAPP_URL; form.target=iframeName; form.style.display='none';
+  var inp = document.createElement('input');
+  inp.type='hidden'; inp.name='data'; inp.value=JSON.stringify(payload);
+  form.appendChild(inp); document.body.appendChild(form);
 
-  window._currentPayload = payload;
-  let done = false;
-  const finish = (ok) => {
+  var done = false;
+  function finish(ok) {
     if (done) return; done = true;
-    if (ok) { showSuccess(window._currentPayload || payload); }
-    else     showToast(T[lang].toastNetErr, true);
+    if (ok) { showSuccess(payload); }
+    else    { showToast(T[lang].toastNetErr, true); }
     btn.textContent = T[lang].btnSave;
     updateBtn();
-    setTimeout(() => {
-      try { document.body.removeChild(form); document.body.removeChild(iframe); } catch(e){}
-    }, 2000);
-  };
+    setTimeout(function(){ try{document.body.removeChild(form);document.body.removeChild(iframe);}catch(e){} }, 2000);
+  }
 
-  iframe.onload = () => {
+  iframe.onload = function() {
     try {
-      const text = (iframe.contentDocument || iframe.contentWindow.document).body.innerText;
-      const json = JSON.parse(text);
+      var text = (iframe.contentDocument || iframe.contentWindow.document).body.innerText;
+      var json = JSON.parse(text);
       finish(json.status === 'ok');
     } catch(e) {
-      // Cross-origin block = GAS received and processed (it redirects)
-      finish(true);
+      finish(true); // cross-origin = GAS processed it
     }
   };
 
-  // Short timeout for preview environments
-  setTimeout(() => finish(true), 3000);
-  
-  // Also try immediate onload
+  setTimeout(function(){ finish(true); }, 4000);
   form.submit();
 }
 
 /* ── TOAST ── */
-function showToast(msg, err=false) {
-  const el = document.getElementById('toast');
+function showToast(msg, err) {
+  var el = document.getElementById('toast');
   el.textContent = msg;
-  el.style.background = err ? 'rgba(255,59,48,.95)' : 'rgba(28,28,30,.95)';
+  el.style.background = err ? 'rgba(255,59,48,.92)' : 'rgba(28,28,30,.92)';
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
+  setTimeout(function(){ el.classList.remove('show'); }, 3000);
 }
-
-/* ── CLEAR ── */
-function clearForm(skipConfirm=false) {
-  if (!skipConfirm && !confirm(T[lang].confirmClear)) return;
-  ['vehiculo','trabajos','materiales','tipoNew','companiaNew','precio'].forEach(id =>
-    document.getElementById(id).value = '');
-  ['cliente','obra','operario','ayudante','tipo','compania'].forEach(id => {
-    const el = document.getElementById(id);
-    el.selectedIndex = 0;
-    el.classList.add('unselected');
-  });
-  document.getElementById('horas').value = '';
-  document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-  ['photosObra','photosMat'].forEach(id =>
-    document.getElementById(id).querySelectorAll('.photo-thumb').forEach(e=>e.remove()));
-  ['rCliente','rObra','rFecha','rOperario','rTipo','rHoras'].forEach(id => clearErr(id));
-  setTipoMode('list'); setCompMode('list');
-  updateBtn();
-}
-
-/* ── THEME ── */
-let currentTheme = localStorage.getItem('partes_theme') || 'light';
-
-function applyTheme(t) {
-  currentTheme = t;
-  localStorage.setItem('partes_theme', t);
-  document.body.classList.remove('dark','light');
-  document.body.classList.add(t);
-  const icon = document.getElementById('themeIcon');
-  if (t === 'dark') {
-    icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
-    icon.setAttribute('style','fill:none');
-    document.getElementById('themeIcon').style.stroke = '#FFD60A';
-  } else {
-    icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-    icon.setAttribute('style','fill:#555;stroke:#555');
-  }
-}
-
-function toggleTheme() {
-  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-}
-
-/* ── HORAS STEPPER ── */
-
-function changeHoras(delta) {
-  const el = document.getElementById('horas');
-  const display = document.getElementById('horasVal');
-  const cur = parseInt((el && el.value) ? el.value : 0) || 0;
-  const nv = Math.max(0, cur + delta);
-  if (el) el.value = nv;
-  if (display) display.textContent = nv;
-  if (typeof clearErr === 'function') clearErr('rHoras');
-  if (typeof updateBtn === 'function') updateBtn();
-}
-
 
 /* ── SUCCESS SCREEN ── */
-let _lastPayload = null;
-let _detailsOpen = false;
+var _detailsOpen = false;
 
 function showSuccess(payload) {
-  _lastPayload = payload;
   _detailsOpen = false;
-  const t = T[lang];
-
+  var t = T[lang];
   document.getElementById('successTitle').textContent = t.successTitle;
-  document.getElementById('successSub').innerHTML = t.successSub;
-  document.getElementById('btnDetails').textContent = t.successDetails;
-  document.getElementById('btnNewText').textContent = t.successNew;
+  document.getElementById('successSub').textContent   = t.successSub;
+  document.getElementById('btnDetails').textContent   = t.successDetails;
+  document.getElementById('btnNew').textContent       = t.successNew;
   document.getElementById('successDetails').style.display = 'none';
 
-  // Build detail rows
-  const rows = [
-    {key: t.lFecha,    val: payload.fecha},
-    {key: t.lCliente,  val: payload.cliente},
-    {key: t.lObra,     val: payload.obra},
-    {key: t.lOp,       val: payload.operario},
-    {key: t.lTipo,     val: payload.tipo ? payload.tipo.split(' / ')[lang==='ru'?1:0] || payload.tipo : '—'},
-    {key: t.lHoras,    val: payload.horas + ' h'},
+  var rows = [
+    {k: t.lFecha,   v: payload.fecha},
+    {k: t.lCliente, v: payload.cliente},
+    {k: t.lObra,    v: payload.obra},
+    {k: t.lOp,      v: payload.operario},
+    {k: t.lTipo,    v: payload.tipo ? (payload.tipo.split(' / ')[lang==='ru'?1:0] || payload.tipo) : ''},
+    {k: t.lHoras,   v: payload.horas + ' h'}
   ];
-  if (payload.compania) rows.push({key: t.lComp, val: payload.compania});
-  if (payload.precio > 0) rows.push({key: t.lPrecio, val: payload.precio + ' €'});
+  if (payload.compania) rows.push({k: t.lComp,   v: payload.compania});
+  if (payload.precio>0) rows.push({k: t.lPrecio, v: payload.precio + ' €'});
 
   document.getElementById('detailRows').innerHTML = rows
-    .filter(r => r.val && r.val !== '0 h')
-    .map(r => `<div class="detail-item"><span class="detail-key">${r.key.replace ? r.key.replace(' •','') : r.key}</span><span class="detail-val">${r.val}</span></div>`)
+    .filter(function(r){ return r.v; })
+    .map(function(r){ return '<div class="detail-row"><span class="detail-key">'+r.k.replace(' •','')+'</span><span class="detail-val">'+r.v+'</span></div>'; })
     .join('');
 
-  const screen = document.getElementById('successScreen');
-  screen.classList.add('show');
+  var sc = document.getElementById('successScreen');
+  sc.classList.add('show');
 }
 
 function toggleDetails() {
   _detailsOpen = !_detailsOpen;
-  const t = T[lang];
+  var t = T[lang];
   document.getElementById('successDetails').style.display = _detailsOpen ? 'block' : 'none';
   document.getElementById('btnDetails').textContent = _detailsOpen ? t.successHide : t.successDetails;
 }
 
 function startNew() {
-  document.getElementById('successScreen').classList.remove('show');
-  document.getElementById('successScreen').style.display = 'none';
+  var sc = document.getElementById('successScreen');
+  sc.classList.remove('show');
   clearForm(true);
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-/* ── INIT ── */
+/* ── CLEAR FORM ── */
+function clearForm(skip) {
+  if (!skip && !confirm(T[lang].confirmClear)) return;
+  ['vehiculo','trabajos','materiales','tipoNew','companiaNew','precio'].forEach(function(id){ document.getElementById(id).value=''; });
+  ['cliente','obra','operario','ayudante','tipo','compania'].forEach(function(id){
+    var el=document.getElementById(id); el.selectedIndex=0; el.classList.remove('has-val');
+  });
+  document.getElementById('horas').value = 0;
+  document.getElementById('horasVal').textContent = '0';
+  document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+  ['photosObra','photosMat'].forEach(function(id){
+    document.getElementById(id).querySelectorAll('.photo-thumb').forEach(function(e){ e.remove(); });
+  });
+  ['rCliente','rObra','rFecha','rOperario','rTipo','rHoras'].forEach(function(id){ clearErr(id); });
+  setTipoMode('list'); setCompMode('list');
+  updateBtn();
+}
 
+/* ── INIT ── */
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
 document.documentElement.lang = 'es';
 apply();
 buildAllSelects();
 updateBtn();
-applyTheme(currentTheme);
-syncLists();
+loadCache();
+setTimeout(syncLists, 500);
 setInterval(syncLists, 30 * 60 * 1000);
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(()=>{});
+  navigator.serviceWorker.register('./sw.js').catch(function(){});
 }
 </script>
-
-<!-- SUCCESS SCREEN -->
-<div id="successScreen" style="display:none;position:fixed;inset:0;background:#fff;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:20px">
-
-  <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(145deg,#4CD964,#34C759);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(52,199,89,0.35)">
-    <svg viewBox="0 0 24 24" style="width:40px;height:40px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
-  </div>
-
-  <div style="text-align:center">
-    <div id="successTitle" style="font-size:24px;font-weight:700;color:#000;margin-bottom:8px">¡Informe enviado!</div>
-    <div id="successSub" style="font-size:15px;color:#8E8E93;line-height:1.5">El parte de trabajo ha sido<br>registrado correctamente</div>
-  </div>
-
-  <!-- DETAILS PANEL -->
-  <div id="successDetails" style="display:none;width:100%;background:#F2F2F7;border-radius:16px;overflow:hidden">
-    <div id="detailRows"></div>
-  </div>
-
-  <div style="width:100%;display:flex;flex-direction:column;gap:10px;margin-top:4px">
-    <button id="btnDetails" onclick="toggleDetails()" style="background:#F2F2F7;color:#2AABEE;border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;width:100%">
-      Ver detalles
-    </button>
-    <button onclick="startNew()" style="background:#2AABEE;color:#fff;border:none;border-radius:14px;padding:15px;font-size:17px;font-weight:600;font-family:inherit;cursor:pointer;width:100%">
-      <span id="btnNewText">+ Nuevo registro</span>
-    </button>
-  </div>
-</div>
-
-<style>
-#successScreen.show{display:flex;animation:successIn .4s cubic-bezier(.34,1.2,.64,1)}
-@keyframes successIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-body.dark #successScreen{background:#1C1C1E}
-body.dark #successTitle{color:#fff}
-body.dark #successDetails{background:#2C2C2E}
-body.dark #btnDetails{background:#2C2C2E;color:#2AABEE}
-.detail-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:0.5px solid rgba(60,60,67,0.12)}
-.detail-item:last-child{border-bottom:none}
-.detail-key{font-size:14px;color:#8E8E93}
-.detail-val{font-size:14px;color:#000;font-weight:500;max-width:60%;text-align:right}
-body.dark .detail-val{color:#fff}
-</style>
-
 </body>
 </html>
