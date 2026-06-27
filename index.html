@@ -342,7 +342,7 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="mode-list-row" id="tipoListRow" style="justify-content:flex-end">
-    <select class="rselect" id="tipo" style="text-align:right;font-size:15px;flex:1;direction:rtl" onchange="onSelChange(this,'rTipo')"></select>
+    <select class="rselect" id="tipo" style="text-align:right;font-size:15px;flex:1" onchange="onSelChange(this,'rTipo')"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="tipoTextRow">
@@ -565,13 +565,21 @@ function buildSelect(id, items, placeholder, preserve=true) {
 }
 
 const TIPOS = [
-  'Construcción / Строительные работы','Demolición / Демонтаж',
-  'Movimiento de tierras / Земляные работы','Instalaciones / Инженерные работы',
-  'Acabados / Отделочные работы','Impermeabilización / Гидроизоляционные работы',
-  'Limpieza / Уборка','Transporte / Транспортировка',
-  'Carga y descarga / Погрузка и разгрузка','Montaje / Монтаж',
-  'Desmontaje / Демонтаж оборудования','Mantenimiento / Техническое обслуживание',
-  'Inspección y control / Проверка и контроль','Replanteo / Разбивочные работы'
+  'Construcción / Строительные работы',
+  'Demolición / Демонтаж',
+  'Movimiento de tierras / Земляные работы',
+  'Instalaciones / Инженерные работы',
+  'Acabados / Отделочные работы',
+  'Impermeabilización / Гидроизоляционные работы',
+  'Limpieza / Уборка',
+  'Transporte / Транспортировка',
+  'Carga y descarga / Погрузка и разгрузка',
+  'Montaje / Монтаж',
+  'Desmontaje / Демонтаж оборудования',
+  'Mantenimiento / Техническое обслуживание',
+  'Inspección y control / Проверка и контроль',
+  'Replanteo / Разбивочные работы',
+  'Otros / Прочие работы'
 ];
 
 function buildAllSelects() {
@@ -754,10 +762,11 @@ function saveRecord() {
   form.appendChild(input);
   document.body.appendChild(form);
 
+  window._currentPayload = payload;
   let done = false;
   const finish = (ok) => {
     if (done) return; done = true;
-    if (ok) { showSuccess(payload); }
+    if (ok) { showSuccess(window._currentPayload || payload); }
     else     showToast(T[lang].toastNetErr, true);
     btn.textContent = T[lang].btnSave;
     updateBtn();
@@ -822,13 +831,12 @@ function applyTheme(t) {
   document.body.classList.add(t);
   const icon = document.getElementById('themeIcon');
   if (t === 'dark') {
-    // Sun icon — switch to light
     icon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
     icon.setAttribute('style','fill:none');
+    document.getElementById('themeIcon').style.stroke = '#FFD60A';
   } else {
-    // Moon icon — switch to dark
     icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-    icon.setAttribute('style','');
+    icon.setAttribute('style','fill:#555;stroke:#555');
   }
 }
 
@@ -903,9 +911,11 @@ function startNew() {
 /* ── INIT ── */
 
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+document.documentElement.lang = 'es';
 apply();
 buildAllSelects();
 updateBtn();
+applyTheme(currentTheme);
 syncLists();
 setInterval(syncLists, 30 * 60 * 1000);
 
