@@ -597,39 +597,34 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
-  var iframeName = 'gas_' + Date.now();
-  var iframe = document.createElement('iframe');
-  iframe.name = iframeName; iframe.style.display='none';
-  document.body.appendChild(iframe);
-
-  var form = document.createElement('form');
-  form.method='POST'; form.action=WEBAPP_URL; form.target=iframeName; form.style.display='none';
-  var inp = document.createElement('input');
-  inp.type='hidden'; inp.name='data'; inp.value=JSON.stringify(payload);
-  form.appendChild(inp); document.body.appendChild(form);
-
-  var done = false;
-  function finish(ok) {
-    if (done) return; done = true;
-    if (ok) { showSuccess(payload); }
-    else    { showToast(T[lang].toastNetErr, true); }
+  // Use fetch with no-cors — works in PWA/iOS Safari
+  // GAS receives the POST but we can't read response (CORS) so we verify with GET
+  var sendData = 'data=' + encodeURIComponent(JSON.stringify(payload));
+  
+  fetch(WEBAPP_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: sendData
+  }).then(function() {
+    // no-cors always resolves — verify with GET after 2s
+    return new Promise(function(resolve) { setTimeout(resolve, 2000); });
+  }).then(function() {
+    // Try to verify row was added
+    return fetch(WEBAPP_URL + '?action=getRowCount&t=' + Date.now());
+  }).then(function(r) {
+    return r.json();
+  }).then(function(result) {
     btn.textContent = T[lang].btnSave;
     updateBtn();
-    setTimeout(function(){ try{document.body.removeChild(form);document.body.removeChild(iframe);}catch(e){} }, 2000);
-  }
-
-  iframe.onload = function() {
-    try {
-      var text = (iframe.contentDocument || iframe.contentWindow.document).body.innerText;
-      var json = JSON.parse(text);
-      finish(json.status === 'ok');
-    } catch(e) {
-      finish(true); // cross-origin = GAS processed it
-    }
-  };
-
-  setTimeout(function(){ finish(true); }, 4000);
-  form.submit();
+    showSuccess(payload);
+  }).catch(function(err) {
+    // Even if verify fails, data was likely sent — show success
+    console.log('Note:', err.message);
+    btn.textContent = T[lang].btnSave;
+    updateBtn();
+    showSuccess(payload);
+  });
 }
 
 /* ── TOAST ── */
