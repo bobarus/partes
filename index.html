@@ -87,15 +87,17 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px)+56px)}
 .b-teal{background:linear-gradient(145deg,#4DD0E1,#00ACC1)}
 .rbadge svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-.rlabel{font-size:16px;color:#000;flex-shrink:0;display:flex;align-items:center;gap:4px;white-space:nowrap;margin-right:8px}
+.rlabel{font-size:16px;color:#000;flex-shrink:0;display:flex;align-items:center;gap:4px;white-space:nowrap}
 .req-dot{width:5px;height:5px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0}
 
 .rinput{flex:1;text-align:right;font-size:16px;color:#000;border:none;outline:none;background:transparent;font-family:inherit;min-width:0;margin-left:auto}
 .rinput::placeholder{color:var(--ph)}
 input[type=date].rinput{-webkit-appearance:none}
 
-.rselect{font-size:15px;color:var(--gray);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;max-width:60%;text-align:right;flex:1}
+.rselect{font-size:15px;color:var(--gray);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;direction:rtl;unicode-bidi:bidi-override}
 .rselect.has-val{color:#000}
+.rselect option{direction:ltr;unicode-bidi:normal}
+.sel-wrap{display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0}
 .rchev{color:var(--ph);margin-left:6px;flex-shrink:0;width:8px;height:14px}
 .rchev svg{width:8px;height:14px;stroke:var(--ph);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
@@ -192,19 +194,23 @@ input[type=file]{display:none}
   <div class="row" id="rCliente">
     <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 7h6M9 11h6M9 15h4"/></svg></div>
     <span class="rlabel" id="lCliente">Cliente <span class="req-dot"></span></span>
-    <select class="rselect" id="cliente" onchange="onSel(this,'rCliente')"></select>
-    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    <div class="sel-wrap">
+      <select class="rselect" id="cliente" onchange="onSel(this,'rCliente')"></select>
+      <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    </div>
   </div>
   <div class="row" id="rObra">
     <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
     <span class="rlabel" id="lObra">Obra <span class="req-dot"></span></span>
-    <select class="rselect" id="obra" onchange="onSel(this,'rObra')"></select>
-    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    <div class="sel-wrap">
+      <select class="rselect" id="obra" onchange="onSel(this,'rObra')"></select>
+      <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    </div>
   </div>
   <div class="row" id="rFecha">
     <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
-    <input class="rinput" type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="margin-left:auto;text-align:right;-webkit-appearance:none">
+    <input type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="margin-left:auto;border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;color:#000;-webkit-appearance:none;cursor:pointer">
   </div>
 </div>
 
@@ -214,14 +220,18 @@ input[type=file]{display:none}
   <div class="row" id="rOperario">
     <div class="rbadge b-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M6.168 18.849A4 4 0 0 1 10 16h4a4 4 0 0 1 3.834 2.855"/></svg></div>
     <span class="rlabel" id="lOp">Operario <span class="req-dot"></span></span>
-    <select class="rselect" id="operario" onchange="onSel(this,'rOperario')"></select>
-    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    <div class="sel-wrap">
+      <select class="rselect" id="operario" onchange="onSel(this,'rOperario')"></select>
+      <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    </div>
   </div>
   <div class="row">
     <div class="rbadge b-green"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2M16 11h6m-3-3v6"/></svg></div>
     <span class="rlabel" id="lAy">Ayudante</span>
-    <select class="rselect" id="ayudante" onchange="this.classList.toggle('has-val',!!this.value)"></select>
-    <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    <div class="sel-wrap">
+      <select class="rselect" id="ayudante" onchange="this.classList.toggle('has-val',!!this.value)"></select>
+      <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
+    </div>
   </div>
   <div class="row">
     <div class="rbadge b-green"><svg viewBox="0 0 24 24"><path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0"/><path d="M5 17H3v-6l2-5h12l2 5v6h-2M5 17h10M3 11h18"/></svg></div>
@@ -242,7 +252,8 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="mode-list-row" id="tipoListRow">
-    <select class="rselect" id="tipo" style="font-size:15px;max-width:70%;margin-left:auto" onchange="onSel(this,'rTipo')"></select>
+    <span style="flex:1"></span>
+    <select class="rselect" id="tipo" style="font-size:15px" onchange="onSel(this,'rTipo')"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="tipoTextRow">
@@ -292,7 +303,8 @@ input[type=file]{display:none}
     </div>
   </div>
   <div class="mode-list-row" id="compListRow">
-    <select class="rselect" id="compania" style="max-width:70%;margin-left:auto" onchange="this.classList.toggle('has-val',!!this.value)"></select>
+    <span style="flex:1"></span>
+    <select class="rselect" id="compania" onchange="this.classList.toggle('has-val',!!this.value)"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="compTextRow">
