@@ -13,7 +13,7 @@
 <link rel="shortcut icon" href="favicon.png">
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwizjKZJQw4mxAC0Vqq4AIA96MJUWf6rwHy96sYFkO3Asx4nX07S1MmpmX61lMglmyr/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxWYQ6dVKIKz-EUDDXpQ6-RdDE2HkO6vJG5IEZqDuFhUcDIGdM-yelDj7nzoH4GMlp1/exec";
 const PRICE_PER_HOUR = 28;
 const CLIENTES  = ["CASA FUSTER","PROCOIN","FALCK"];
 const OBRAS     = ["ORIGINAL","CENTRO","LA MASIA","SANT QUIRZE","FALCK BASE"];
@@ -597,34 +597,46 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
-  // Use fetch with no-cors — works in PWA/iOS Safari
-  // GAS receives the POST but we can't read response (CORS) so we verify with GET
-  var sendData = 'data=' + encodeURIComponent(JSON.stringify(payload));
+  // Send via JSONP (script tag) — only reliable cross-origin method for GAS
+  window._saveCallback = function(result) {
+    btn.textContent = T[lang].btnSave;
+    updateBtn();
+    if (result && result.status === 'ok') {
+      showSuccess(payload);
+    } else {
+      showToast(T[lang].toastNetErr, true);
+      console.log('GAS error:', result ? result.message : 'unknown');
+    }
+    // cleanup
+    var s = document.getElementById('_gas_save_script');
+    if (s) s.parentNode.removeChild(s);
+  };
+
+  // Add data to URL as GET parameter with callback
+  var dataParam = encodeURIComponent(JSON.stringify(payload));
+  var url = WEBAPP_URL + '?action=save&data=' + dataParam + '&callback=_saveCallback&t=' + Date.now();
   
-  fetch(WEBAPP_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: sendData
-  }).then(function() {
-    // no-cors always resolves — verify with GET after 2s
-    return new Promise(function(resolve) { setTimeout(resolve, 2000); });
-  }).then(function() {
-    // Try to verify row was added
-    return fetch(WEBAPP_URL + '?action=getRowCount&t=' + Date.now());
-  }).then(function(r) {
-    return r.json();
-  }).then(function(result) {
+  var s = document.getElementById('_gas_save_script');
+  if (s) s.parentNode.removeChild(s);
+  s = document.createElement('script');
+  s.id = '_gas_save_script';
+  s.onerror = function() {
     btn.textContent = T[lang].btnSave;
     updateBtn();
-    showSuccess(payload);
-  }).catch(function(err) {
-    // Even if verify fails, data was likely sent — show success
-    console.log('Note:', err.message);
-    btn.textContent = T[lang].btnSave;
-    updateBtn();
-    showSuccess(payload);
-  });
+    showToast(T[lang].toastNetErr, true);
+  };
+  s.src = url;
+  document.head.appendChild(s);
+
+  // Timeout fallback — 10 seconds
+  setTimeout(function() {
+    if (window._saveCallback) {
+      delete window._saveCallback;
+      btn.textContent = T[lang].btnSave;
+      updateBtn();
+      showToast(T[lang].toastNetErr, true);
+    }
+  }, 10000);
 }
 
 /* ── TOAST ── */
