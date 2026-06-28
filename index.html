@@ -355,12 +355,10 @@ input[type=file]{display:none}
     <div id="detailRows"></div>
   </div>
   <div class="success-btns">
-    <div style="display:flex;gap:10px;width:100%">
-      <button class="btn-details" id="btnDetails" onclick="toggleDetails()" style="flex:1">Ver detalles</button>
-      <button onclick="shareRecord()" style="width:48px;height:48px;border-radius:14px;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0" title="Compartir">
-        <svg viewBox="0 0 24 24" style="width:22px;height:22px;stroke:#2AABEE;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-      </button>
-    </div>
+    <button onclick="shareRecord()" style="width:100%;background:#fff;color:#2AABEE;border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#2AABEE;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      <span id="shareLabel">Compartir</span>
+    </button>
     <button class="btn-new" id="btnNew" onclick="startNew()">+ Nuevo registro</button>
   </div>
 </div>
@@ -380,7 +378,7 @@ var T = {
     trabPh:'Describir los trabajos...',matPh:'Listar materiales...',horasPh:'0',precPh:'0.00',
     confirmClear:'¿Borrar todo?',
     successTitle:'¡Informe enviado!',successSub:'El parte ha sido registrado correctamente',
-    successDetails:'Ver detalles',successHide:'Ocultar detalles',successNew:'+ Nuevo registro'},
+    successDetails:'Ver detalles',successHide:'Ocultar detalles',successNew:'+ Nuevo registro',shareLabel:'Compartir'},
   ru:{title:'ОТЧЁТ',s1:'Идентификация',s1req:'• обязательно',s2:'Персонал',s3:'Работы',s5:'Материалы',
     lCliente:'Клиент',lObra:'Объект',lFecha:'Дата',lOp:'Исполнитель',lAy:'Помощник',lVeh:'Транспорт',
     lTipo:'Тип',lHoras:'Часы',lTrab:'Выполненные работы',lComp:'Компания',lMat:'Использованные материалы',lPrecio:'Цена',
@@ -393,7 +391,7 @@ var T = {
     trabPh:'Описать работы...',matPh:'Перечислить материалы...',horasPh:'0',precPh:'0.00',
     confirmClear:'Очистить все поля?',
     successTitle:'Отчёт отправлен!',successSub:'Наряд успешно зарегистрирован',
-    successDetails:'Подробнее',successHide:'Скрыть',successNew:'+ Новый отчёт'},
+    successDetails:'Подробнее',successHide:'Скрыть',successNew:'+ Новый отчёт',shareLabel:'Поделиться'},
   en:{title:'Work report',s1:'Identification',s1req:'• required',s2:'Staff',s3:'Work',s5:'Materials',
     lCliente:'Client',lObra:'Site',lFecha:'Date',lOp:'Operative',lAy:'Assistant',lVeh:'Vehicle',
     lTipo:'Type',lHoras:'Hours',lTrab:'Work performed',lComp:'Company',lMat:'Materials used',lPrecio:'Price',
@@ -406,7 +404,7 @@ var T = {
     trabPh:'Describe work...',matPh:'List materials...',horasPh:'0',precPh:'0.00',
     confirmClear:'Clear everything?',
     successTitle:'Report sent!',successSub:'Work report registered successfully',
-    successDetails:'View details',successHide:'Hide details',successNew:'+ New report'}
+    successDetails:'View details',successHide:'Hide details',successNew:'+ New report',shareLabel:'Share'}
 };
 var lang = 'es';
 
@@ -691,8 +689,9 @@ function showSuccess(payload) {
   var t = T[lang];
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successSub').textContent   = t.successSub;
-  document.getElementById('btnDetails').style.display = 'none'; // скрываем кнопку деталей
   document.getElementById('btnNew').textContent       = t.successNew;
+  var sl = document.getElementById('shareLabel');
+  if (sl) sl.textContent = t.shareLabel || 'Compartir';
 
   // Собираем ВСЕ заполненные поля
   var rows = [];
@@ -720,11 +719,7 @@ function showSuccess(payload) {
   if (payload.materiales) rows.push({k: t.lMat,    v: payload.materiales});
   if (payload.precio > 0) rows.push({k: t.lPrecio, v: payload.precio + ' €'});
   
-  // Итого
-  if (payload.total > 0) {
-    var totalLabel = lang==='ru' ? 'Итого' : lang==='en' ? 'Total' : 'Total';
-    rows.push({k: totalLabel, v: payload.total + ' €', bold: true});
-  }
+
 
   document.getElementById('detailRows').innerHTML = rows
     .map(function(r) {
