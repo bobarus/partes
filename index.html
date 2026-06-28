@@ -13,7 +13,7 @@
 <link rel="shortcut icon" href="favicon.png">
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz8xMIqRLWlL58arsBaLqzbJeah33aa9cKWNItjX9PIblbKnQfZGgLFJWxhincS8VIo/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzr9vricCxwcwUMtkQKhTk5UPQnEXwGq53bx4dbhZ4bqRIVOzA2FS9DE3wkrqfn4SB-/exec";
 const PRICE_PER_HOUR = 28;
 const CLIENTES  = ["CASA FUSTER","PROCOIN","FALCK"];
 const OBRAS     = ["ORIGINAL","CENTRO","LA MASIA","SANT QUIRZE","FALCK BASE"];
@@ -597,42 +597,45 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
-  // JSONP via script tag — единственный надёжный метод для iOS PWA + GAS
-  window._saveCallback = function(result) {
-    var s = document.getElementById('_gas_save');
-    if (s) s.parentNode.removeChild(s);
-    window._saveCallback = null;
-    btn.textContent = T[lang].btnSave;
-    updateBtn();
-    if (result && result.status === 'ok') {
-      showSuccess(payload);
-    } else {
-      var msg = result ? result.message : 'Error';
-      console.log('GAS error:', msg);
-      showToast(T[lang].toastNetErr, true);
-    }
-  };
-
-  var s = document.getElementById('_gas_save');
-  if (s) s.parentNode.removeChild(s);
-  var sc = document.createElement('script');
-  sc.id = '_gas_save';
-  sc.onerror = function() {
-    window._saveCallback = null;
-    btn.textContent = T[lang].btnSave;
-    updateBtn();
-    showToast(T[lang].toastNetErr, true);
-  };
-  sc.src = WEBAPP_URL + '?action=save&callback=_saveCallback&t=' + Date.now() +
+  // Fetch GET — GAS ContentService GET поддерживает CORS
+  var url = WEBAPP_URL + '?action=save&t=' + Date.now() +
     '&data=' + encodeURIComponent(JSON.stringify(payload));
-  document.head.appendChild(sc);
 
-  // Timeout 15s
-  setTimeout(function() {
-    if (window._saveCallback) {
-      window._saveCallback({status:'error', message:'timeout'});
-    }
-  }, 15000);
+  fetch(url, { method: 'GET', mode: 'cors' })
+    .then(function(r) { return r.json(); })
+    .then(function(result) {
+      btn.textContent = T[lang].btnSave;
+      updateBtn();
+      if (result && result.status === 'ok') {
+        showSuccess(payload);
+      } else {
+        console.log('GAS error:', result ? result.message : 'unknown');
+        showToast(T[lang].toastNetErr, true);
+      }
+    })
+    .catch(function(err) {
+      console.log('Fetch error:', err.message);
+      // Try JSONP as fallback
+      window._saveCallback = function(result) {
+        var s = document.getElementById('_gas_save');
+        if (s) s.parentNode.removeChild(s);
+        window._saveCallback = null;
+        btn.textContent = T[lang].btnSave;
+        updateBtn();
+        if (result && result.status === 'ok') { showSuccess(payload); }
+        else { showToast(T[lang].toastNetErr, true); }
+      };
+      var s = document.getElementById('_gas_save');
+      if (s) s.parentNode.removeChild(s);
+      var sc = document.createElement('script');
+      sc.id = '_gas_save';
+      sc.src = WEBAPP_URL + '?action=save&callback=_saveCallback&t=' + Date.now() +
+        '&data=' + encodeURIComponent(JSON.stringify(payload));
+      document.head.appendChild(sc);
+      setTimeout(function() {
+        if (window._saveCallback) { window._saveCallback({status:'error'}); }
+      }, 10000);
+    });
 }
 
 /* ── TOAST ── */
