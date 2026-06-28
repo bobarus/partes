@@ -96,10 +96,10 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px)+56px)}
 .rinput::placeholder{color:var(--ph)}
 input[type=date].rinput{-webkit-appearance:none}
 
-.rselect{font-size:15px;color:var(--gray);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;direction:rtl;unicode-bidi:bidi-override}
+.rselect{font-size:15px;color:var(--gray);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;cursor:pointer;text-align:right;text-align-last:right;min-width:80px;max-width:100%}
 .rselect.has-val{color:#000}
 .rselect option{direction:ltr;unicode-bidi:normal}
-.sel-wrap{display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0}
+.sel-wrap{display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0;max-width:65%}
 .rchev{color:var(--ph);margin-left:6px;flex-shrink:0;width:8px;height:14px}
 .rchev svg{width:8px;height:14px;stroke:var(--ph);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
@@ -298,7 +298,7 @@ input[type=file]{display:none}
   </div>
   <div class="mode-list-row" id="compListRow">
     <span style="flex:1"></span>
-    <select class="rselect" id="compania" onchange="this.classList.toggle('has-val',!!this.value)"></select>
+    <select class="rselect" id="compania" style="min-width:80px" onchange="this.classList.toggle('has-val',!!this.value)"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="compTextRow">
