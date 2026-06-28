@@ -556,35 +556,6 @@ function photoNames(gridId) {
     .map(function(el){ return el._file ? el._file.name : ''; }).filter(Boolean).join(', ');
 }
 
-// Конвертирует фото в base64 для отправки на Google Drive
-function photosToBase64(gridId) {
-  return new Promise(function(resolve) {
-    var thumbs = Array.from(document.getElementById(gridId).querySelectorAll('.photo-thumb'));
-    var files = thumbs.map(function(el){ return el._file; }).filter(Boolean);
-    if (!files.length) { resolve([]); return; }
-    
-    var results = [];
-    var done = 0;
-    
-    files.forEach(function(file, i) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        results[i] = {
-          name: file.name,
-          type: file.type,
-          data: e.target.result  // base64 data URL
-        };
-        done++;
-        if (done === files.length) resolve(results);
-      };
-      reader.onerror = function() {
-        done++;
-        if (done === files.length) resolve(results.filter(Boolean));
-      };
-      reader.readAsDataURL(file);
-    });
-  });
-}
 
 /* ── SAVE ── */
 function saveRecord() {
@@ -675,35 +646,6 @@ function saveRecord() {
     });
 }
 
-function uploadPhotosAsync(rowNum, fecha) {
-  Promise.all([
-    photosToBase64('photosObra'),
-    photosToBase64('photosMat')
-  ]).then(function(results) {
-    var photosObra = results[0];
-    var photosMat  = results[1];
-    
-    if (!photosObra.length && !photosMat.length) return;
-    
-    var photoPayload = {
-      action:     'uploadPhotos',
-      row:        rowNum,
-      fecha:      fecha,
-      photos_obra_data: photosObra,
-      photos_mat_data:  photosMat
-    };
-    
-    // POST запрос для фото (могут быть большие)
-    fetch(PROXY_URL + '?action=uploadPhotos&row=' + rowNum + '&fecha=' + encodeURIComponent(fecha), {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(photoPayload)
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(r) { console.log('Photos uploaded:', r.status, r.links); })
-    .catch(function(e) { console.log('Photo upload error:', e.message); });
-  });
-}
 
 /* ── TOAST ── */
 function showToast(msg, err) {
