@@ -153,18 +153,18 @@ input[type=file]{display:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 /* SUCCESS SCREEN */
-#successScreen{display:none;position:fixed;inset:0;background:#F2F2F7;z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:20px}
+#successScreen{display:none;position:fixed;inset:0;background:#F2F2F7;z-index:500;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 24px;padding-top:60px;gap:16px;overflow-y:auto}
 #successScreen.show{display:flex;animation:fadeIn .4s cubic-bezier(.34,1.2,.64,1)}
 @keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 .success-icon{width:88px;height:88px;border-radius:50%;background:linear-gradient(145deg,#5EDB74,#34C759);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 36px rgba(52,199,89,0.35)}
 .success-icon svg{width:44px;height:44px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .success-title{font-size:26px;font-weight:700;color:#000;text-align:center}
 .success-sub{font-size:16px;color:var(--gray);text-align:center;line-height:1.5}
-.success-details{width:100%;background:#fff;border-radius:16px;overflow:hidden;display:none}
+.success-details{width:100%;background:#fff;border-radius:16px;overflow:hidden;max-height:45vh;overflow-y:auto}
 .detail-row{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:0.5px solid var(--sep)}
 .detail-row:last-child{border-bottom:none}
 .detail-key{font-size:14px;color:var(--gray)}
-.detail-val{font-size:14px;color:#000;font-weight:500;max-width:55%;text-align:right}
+.detail-val{font-size:14px;color:#000;font-weight:500;max-width:60%;text-align:right;word-break:break-word}
 .success-btns{width:100%;display:flex;flex-direction:column;gap:10px}
 .btn-details{background:#fff;color:var(--blue);border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;width:100%}
 .btn-new{background:var(--blue);color:#fff;border:none;border-radius:14px;padding:15px;font-size:17px;font-weight:600;font-family:inherit;cursor:pointer;width:100%}
@@ -558,6 +558,36 @@ function photoNames(gridId) {
     .map(function(el){ return el._file ? el._file.name : ''; }).filter(Boolean).join(', ');
 }
 
+// Конвертирует фото в base64 для отправки на Google Drive
+function photosToBase64(gridId) {
+  return new Promise(function(resolve) {
+    var thumbs = Array.from(document.getElementById(gridId).querySelectorAll('.photo-thumb'));
+    var files = thumbs.map(function(el){ return el._file; }).filter(Boolean);
+    if (!files.length) { resolve([]); return; }
+    
+    var results = [];
+    var done = 0;
+    
+    files.forEach(function(file, i) {
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        results[i] = {
+          name: file.name,
+          type: file.type,
+          data: e.target.result  // base64 data URL
+        };
+        done++;
+        if (done === files.length) resolve(results);
+      };
+      reader.onerror = function() {
+        done++;
+        if (done === files.length) resolve(results.filter(Boolean));
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+}
+
 /* ── SAVE ── */
 function saveRecord() {
   if (!document.getElementById('btnSave').classList.contains('ready')) {
@@ -579,7 +609,8 @@ function saveRecord() {
   var horas  = parseInt(document.getElementById('horas').value)||0;
   var precio = parseFloat(document.getElementById('precio').value)||0;
 
-  var payload = {
+  // Собираем данные формы
+  var formData = {
     fecha:       document.getElementById('fecha').value,
     cliente:     document.getElementById('cliente').value,
     obra:        document.getElementById('obra').value,
@@ -592,34 +623,54 @@ function saveRecord() {
     compania:    getComp(),
     materiales:  document.getElementById('materiales').value,
     precio:      precio,
-    total:       (horas * PRICE_PER_HOUR + precio).toFixed(2),
+    total:       parseFloat((horas * PRICE_PER_HOUR + precio).toFixed(2)),
     timestamp:   new Date().toISOString(),
     photos_obra: photoNames('photosObra'),
     photos_mat:  photoNames('photosMat')
   };
 
-  // Отправка через Cloudflare Worker прокси
-  var dataUrl = '?action=save&t=' + Date.now() +
-    '&data=' + encodeURIComponent(JSON.stringify(payload));
-
-  fetch(PROXY_URL + dataUrl)
-    .then(function(r) { return r.json(); })
-    .then(function(result) {
-      btn.textContent = T[lang].btnSave;
-      updateBtn();
-      if (result && result.status === 'ok') {
-        showSuccess(payload);
-      } else {
-        console.log('Error:', result ? result.message : 'unknown');
-        showToast(T[lang].toastNetErr, true);
-      }
-    })
-    .catch(function(err) {
-      console.log('Fetch error:', err.message);
-      btn.textContent = T[lang].btnSave;
-      updateBtn();
-      showToast(T[lang].toastNetErr, true);
+  // Конвертируем фото в base64 и отправляем
+  Promise.all([
+    photosToBase64('photosObra'),
+    photosToBase64('photosMat')
+  ]).then(function(results) {
+    var payload = Object.assign({}, formData, {
+      photos_obra_data: results[0],
+      photos_mat_data:  results[1]
     });
+
+    var dataStr = JSON.stringify(payload);
+    
+    // Если данных слишком много (фото > 4MB) — отправляем без фото
+    if (dataStr.length > 4 * 1024 * 1024) {
+      console.log('Photos too large, sending without photos');
+      payload.photos_obra_data = [];
+      payload.photos_mat_data  = [];
+      dataStr = JSON.stringify(payload);
+    }
+
+    var dataUrl = '?action=save&t=' + Date.now() +
+      '&data=' + encodeURIComponent(dataStr);
+
+    fetch(PROXY_URL + dataUrl)
+      .then(function(r) { return r.json(); })
+      .then(function(result) {
+        btn.textContent = T[lang].btnSave;
+        updateBtn();
+        if (result && result.status === 'ok') {
+          showSuccess(payload);
+        } else {
+          console.log('Error:', result ? result.message : 'unknown');
+          showToast(T[lang].toastNetErr, true);
+        }
+      })
+      .catch(function(err) {
+        console.log('Fetch error:', err.message);
+        btn.textContent = T[lang].btnSave;
+        updateBtn();
+        showToast(T[lang].toastNetErr, true);
+      });
+  });
 }
 
 /* ── TOAST ── */
@@ -636,32 +687,77 @@ var _detailsOpen = false;
 
 function showSuccess(payload) {
   window._sharePayload = payload;
-  _detailsOpen = false;
+  _detailsOpen = true;
   var t = T[lang];
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successSub').textContent   = t.successSub;
-  document.getElementById('btnDetails').textContent   = t.successDetails;
+  document.getElementById('btnDetails').style.display = 'none'; // скрываем кнопку деталей
   document.getElementById('btnNew').textContent       = t.successNew;
-  document.getElementById('successDetails').style.display = 'none';
 
-  var rows = [
-    {k: t.lFecha,   v: payload.fecha},
-    {k: t.lCliente, v: payload.cliente},
-    {k: t.lObra,    v: payload.obra},
-    {k: t.lOp,      v: payload.operario},
-    {k: t.lTipo,    v: payload.tipo ? (payload.tipo.split(' / ')[lang==='ru'?1:0] || payload.tipo) : ''},
-    {k: t.lHoras,   v: payload.horas + ' h'}
-  ];
-  if (payload.compania) rows.push({k: t.lComp,   v: payload.compania});
-  if (payload.precio>0) rows.push({k: t.lPrecio, v: payload.precio + ' €'});
+  // Собираем ВСЕ заполненные поля
+  var rows = [];
+  
+  // Идентификация
+  if (payload.fecha)    rows.push({k: t.lFecha,   v: formatDate(payload.fecha)});
+  if (payload.cliente)  rows.push({k: t.lCliente, v: payload.cliente});
+  if (payload.obra)     rows.push({k: t.lObra,    v: payload.obra});
+  
+  // Персонал
+  if (payload.operario) rows.push({k: t.lOp,  v: payload.operario});
+  if (payload.ayudante) rows.push({k: t.lAy,  v: payload.ayudante});
+  if (payload.vehiculo) rows.push({k: t.lVeh, v: payload.vehiculo});
+  
+  // Работа
+  if (payload.tipo) {
+    var tipoStr = payload.tipo.split(' / ')[lang==='ru'?1:0] || payload.tipo;
+    rows.push({k: t.lTipo, v: tipoStr});
+  }
+  if (payload.horas)    rows.push({k: t.lHoras,  v: payload.horas + ' h'});
+  if (payload.trabajos) rows.push({k: t.lTrab,   v: payload.trabajos});
+  
+  // Материалы
+  if (payload.compania)   rows.push({k: t.lComp,   v: payload.compania});
+  if (payload.materiales) rows.push({k: t.lMat,    v: payload.materiales});
+  if (payload.precio > 0) rows.push({k: t.lPrecio, v: payload.precio + ' €'});
+  
+  // Итого
+  if (payload.total > 0) {
+    var totalLabel = lang==='ru' ? 'Итого' : lang==='en' ? 'Total' : 'Total';
+    rows.push({k: totalLabel, v: payload.total + ' €', bold: true});
+  }
 
   document.getElementById('detailRows').innerHTML = rows
-    .filter(function(r){ return r.v; })
-    .map(function(r){ return '<div class="detail-row"><span class="detail-key">'+r.k.replace(' •','')+'</span><span class="detail-val">'+r.v+'</span></div>'; })
+    .map(function(r) {
+      var valStyle = r.bold ? 'font-weight:600;color:#000' : '';
+      var isMultiline = r.v && r.v.length > 30;
+      if (isMultiline) {
+        return '<div class="detail-row" style="flex-direction:column;align-items:flex-start;gap:4px">' +
+          '<span class="detail-key">' + r.k + '</span>' +
+          '<span class="detail-val" style="text-align:left;max-width:100%;' + valStyle + '">' + r.v + '</span>' +
+          '</div>';
+      }
+      return '<div class="detail-row"><span class="detail-key">' + r.k + 
+        '</span><span class="detail-val" style="' + valStyle + '">' + r.v + '</span></div>';
+    })
     .join('');
+
+  // Показываем детали сразу
+  document.getElementById('successDetails').style.display = 'block';
 
   var sc = document.getElementById('successScreen');
   sc.classList.add('show');
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    var parts = dateStr.split('-');
+    var months = {es:['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'],
+                  ru:['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'],
+                  en:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']};
+    var m = months[lang] || months.es;
+    return parts[2] + ' ' + m[parseInt(parts[1])-1] + ' ' + parts[0];
+  } catch(e) { return dateStr; }
 }
 
 function toggleDetails() {
