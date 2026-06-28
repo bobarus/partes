@@ -15,6 +15,7 @@
 <script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxnmCxYzpa7TfghehoE1Ovn430AhwOrDCGz4bOgLvXXO-4009BFEgwfAs8D8o047Uio/exec";
 const PROXY_URL = "https://dawn-bar-50dc.bobarus2206.workers.dev";
+const PHOTO_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSePLMrajAvCZTCS5Z7pIH3xM9ePRlgQLzdfnQzocLMRmNDzIA/viewform";
 const PRICE_PER_HOUR = 28;
 const CLIENTES  = ["CASA FUSTER","PROCOIN","FALCK"];
 const OBRAS     = ["ORIGINAL","CENTRO","LA MASIA","SANT QUIRZE","FALCK BASE"];
@@ -153,7 +154,7 @@ input[type=file]{display:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
 
 /* SUCCESS SCREEN */
-#successScreen{display:none;position:fixed;inset:0;background:#F2F2F7;z-index:500;flex-direction:column;align-items:center;justify-content:flex-start;padding:32px 24px;padding-top:60px;gap:16px;overflow-y:auto}
+#successScreen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#F2F2F7;z-index:9999;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px 20px;padding-top:max(60px,env(safe-area-inset-top));gap:16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 #successScreen.show{display:flex;animation:fadeIn .4s cubic-bezier(.34,1.2,.64,1)}
 @keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 .success-icon{width:88px;height:88px;border-radius:50%;background:linear-gradient(145deg,#5EDB74,#34C759);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 36px rgba(52,199,89,0.35)}
@@ -279,16 +280,6 @@ input[type=file]{display:none}
     <span class="sub-label" id="lTrab">Trabajos realizados</span>
     <textarea class="rta" id="trabajos"></textarea>
   </div>
-
-  <div class="photo-wrap">
-    <div class="photo-sublabel" id="lFotosObra">Fotos de obra</div>
-    <div class="photo-scroll" id="photosObra">
-      <label class="photo-add-btn" for="inObra">
-        <svg viewBox="0 0 24 24"><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2l-2-3H7L5 7z"/><circle cx="10" cy="13" r="3"/><path d="M20 7v6m-3-3h6"/></svg>
-        <span id="addO">Foto</span>
-      </label>
-      <input type="file" id="inObra" accept="image/*" multiple onchange="addPhotos(this,'photosObra')">
-    </div>
   </div>
 </div>
 
@@ -325,16 +316,6 @@ input[type=file]{display:none}
       <span style="font-size:15px;color:var(--gray);flex-shrink:0">€</span>
     </div>
   </div>
-
-  <div class="photo-wrap">
-    <div class="photo-sublabel" id="lFotosMat">Fotos / recibo</div>
-    <div class="photo-scroll" id="photosMat">
-      <label class="photo-add-btn" for="inMat">
-        <svg viewBox="0 0 24 24"><path d="M5 21V5a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 7h6m-6 4h6m-6 4h4"/></svg>
-        <span id="addM">Recibo</span>
-      </label>
-      <input type="file" id="inMat" accept="image/*" multiple onchange="addPhotos(this,'photosMat')">
-    </div>
   </div>
 </div>
 
@@ -342,12 +323,12 @@ input[type=file]{display:none}
 <button class="btn-clear" id="btnClear" onclick="clearForm()">Borrar todo</button>
 <div class="toast" id="toast"></div>
 
-<!-- SUCCESS SCREEN -->
+<!-- SUCCESS SCREEN — Экран 1: отчёт отправлен -->
 <div id="successScreen">
   <div class="success-icon">
-    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    <svg viewBox="0 0 24 24" style="width:44px;height:44px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
   </div>
-  <div>
+  <div style="text-align:center">
     <div class="success-title" id="successTitle">¡Informe enviado!</div>
     <div class="success-sub" id="successSub">El parte ha sido registrado correctamente</div>
   </div>
@@ -359,11 +340,31 @@ input[type=file]{display:none}
       <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#2AABEE;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       <span id="shareLabel">Compartir</span>
     </button>
+    <button id="btnAddPhoto" onclick="openPhotoForm()" style="width:100%;background:#F2F2F7;color:#000;border:none;border-radius:14px;padding:14px;font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+      <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#000;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2l-2-3H7L5 7z"/><circle cx="10" cy="13" r="3"/></svg>
+      <span id="btnAddPhotoText">Añadir fotos</span>
+    </button>
     <button class="btn-new" id="btnNew" onclick="startNew()">+ Nuevo registro</button>
   </div>
 </div>
 
+<!-- SUCCESS SCREEN 2 — Всё отправлено -->
+<div id="successScreen2" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#F2F2F7;z-index:9999;flex-direction:column;align-items:center;justify-content:center;padding:32px;gap:20px">
+  <div class="success-icon" style="background:linear-gradient(145deg,#4FC3F7,#2AABEE)">
+    <svg viewBox="0 0 24 24" style="width:44px;height:44px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div style="text-align:center">
+    <div class="success-title" id="allDoneTitle">¡Todo enviado!</div>
+    <div class="success-sub" id="allDoneSub">El parte y las fotos han sido enviados correctamente</div>
+  </div>
+  <button class="btn-new" onclick="startNew()" style="width:100%">+ Nuevo registro</button>
+</div>
+
 <script>
+
+
+<script>
+
 /* ── TRANSLATIONS ── */
 var T = {
   es:{title:'Parte de trabajo',s1:'Identificación',s1req:'• obligatorio',s2:'Personal',s3:'Trabajo',s5:'Materiales',
@@ -378,7 +379,7 @@ var T = {
     trabPh:'Describir los trabajos...',matPh:'Listar materiales...',horasPh:'0',precPh:'0.00',
     confirmClear:'¿Borrar todo?',
     successTitle:'¡Informe enviado!',successSub:'El parte ha sido registrado correctamente',
-    successDetails:'Ver detalles',successHide:'Ocultar detalles',successNew:'+ Nuevo registro',shareLabel:'Compartir'},
+    successDetails:'Ver detalles',successHide:'Ocultar detalles',successNew:'+ Nuevo registro',shareLabel:'Compartir',addPhoto:'Añadir fotos',allDoneTitle:'¡Todo enviado!',allDoneSub:'El parte y las fotos han sido enviados'},
   ru:{title:'ОТЧЁТ',s1:'Идентификация',s1req:'• обязательно',s2:'Персонал',s3:'Работы',s5:'Материалы',
     lCliente:'Клиент',lObra:'Объект',lFecha:'Дата',lOp:'Исполнитель',lAy:'Помощник',lVeh:'Транспорт',
     lTipo:'Тип',lHoras:'Часы',lTrab:'Выполненные работы',lComp:'Компания',lMat:'Использованные материалы',lPrecio:'Цена',
@@ -391,7 +392,7 @@ var T = {
     trabPh:'Описать работы...',matPh:'Перечислить материалы...',horasPh:'0',precPh:'0.00',
     confirmClear:'Очистить все поля?',
     successTitle:'Отчёт отправлен!',successSub:'Наряд успешно зарегистрирован',
-    successDetails:'Подробнее',successHide:'Скрыть',successNew:'+ Новый отчёт',shareLabel:'Поделиться'},
+    successDetails:'Подробнее',successHide:'Скрыть',successNew:'+ Новый отчёт',shareLabel:'Поделиться',addPhoto:'Добавить фото',allDoneTitle:'Всё отправлено!',allDoneSub:'Отчёт и фото успешно отправлены'},
   en:{title:'Work report',s1:'Identification',s1req:'• required',s2:'Staff',s3:'Work',s5:'Materials',
     lCliente:'Client',lObra:'Site',lFecha:'Date',lOp:'Operative',lAy:'Assistant',lVeh:'Vehicle',
     lTipo:'Type',lHoras:'Hours',lTrab:'Work performed',lComp:'Company',lMat:'Materials used',lPrecio:'Price',
@@ -404,7 +405,7 @@ var T = {
     trabPh:'Describe work...',matPh:'List materials...',horasPh:'0',precPh:'0.00',
     confirmClear:'Clear everything?',
     successTitle:'Report sent!',successSub:'Work report registered successfully',
-    successDetails:'View details',successHide:'Hide details',successNew:'+ New report',shareLabel:'Share'}
+    successDetails:'View details',successHide:'Hide details',successNew:'+ New report',shareLabel:'Share',addPhoto:'Add photos',allDoneTitle:'All sent!',allDoneSub:'Report and photos sent successfully'}
 };
 var lang = 'es';
 
@@ -425,7 +426,6 @@ function setL(l) {
 function apply() {
   var t = T[lang];
   var map = {nTitle:'title',s1lbl:'s1',s1req:'s1req',s2lbl:'s2',s3lbl:'s3',s5lbl:'s5',
-    lFotosObra:'lFotosObra',lFotosMat:'lFotosMat',addO:'addO',addM:'addM',
     btnSave:'btnSave',btnClear:'btnClear',ctTL:'ctList',ctTN:'ctOtro',ctCL:'ctList',ctCN:'ctNew'};
   Object.keys(map).forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=t[map[id]]; });
   ['lCliente','lObra','lFecha','lOp','lTipo','lHoras'].forEach(function(id){
@@ -469,7 +469,7 @@ function syncLists() {
   if (old) old.parentNode.removeChild(old);
   var s = document.createElement('script');
   s.id = '_gas_sync';
-  s.src = (typeof PROXY_URL !== 'undefined' && PROXY_URL ? PROXY_URL : WEBAPP_URL) + '?action=getLists&callback=_gasCallback&t=' + Date.now();
+  s.src = WEBAPP_URL + '?action=getLists&callback=_gasCallback&t=' + Date.now();
   s.onerror = function() { loadCache(); };
   document.head.appendChild(s);
 }
@@ -623,8 +623,8 @@ function saveRecord() {
     precio:      precio,
     total:       parseFloat((horas * PRICE_PER_HOUR + precio).toFixed(2)),
     timestamp:   new Date().toISOString(),
-    photos_obra: photoNames('photosObra'),
-    photos_mat:  photoNames('photosMat')
+    photos_obra: '',
+    photos_mat:  ''
   };
 
   // Конвертируем фото в base64 и отправляем
@@ -726,6 +726,8 @@ function showSuccess(payload) {
   document.getElementById('btnNew').textContent       = t.successNew;
   var sl = document.getElementById('shareLabel');
   if (sl) sl.textContent = t.shareLabel || 'Compartir';
+  var ap = document.getElementById('btnAddPhotoText');
+  if (ap) ap.textContent = t.addPhoto || 'Añadir fotos';
 
   // Собираем ВСЕ заполненные поля
   var rows = [];
@@ -831,9 +833,33 @@ function shareRecord() {
   }
 }
 
+function openPhotoForm() {
+  if (!PHOTO_FORM_URL) {
+    showToast('Google Form URL not set', true);
+    return;
+  }
+  // Показываем экран 2 сразу (форма откроется отдельно)
+  showAllDone();
+  // Открываем форму
+  setTimeout(function() {
+    window.open(PHOTO_FORM_URL, '_blank');
+  }, 300);
+}
+
+function showAllDone() {
+  var t = T[lang];
+  document.getElementById('allDoneTitle').textContent = t.allDoneTitle || '¡Todo enviado!';
+  document.getElementById('allDoneSub').textContent   = t.allDoneSub  || '';
+  document.getElementById('successScreen').style.display = 'none';
+  var sc2 = document.getElementById('successScreen2');
+  sc2.style.display = 'flex';
+}
+
 function startNew() {
   var sc = document.getElementById('successScreen');
   sc.classList.remove('show');
+  var sc2 = document.getElementById('successScreen2');
+  if (sc2) sc2.style.display = 'none';
   clearForm(true);
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -847,17 +873,31 @@ function clearForm(skip) {
   });
   document.getElementById('horas').value = 0;
   document.getElementById('horasVal').textContent = '0';
-  document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-  ['photosObra','photosMat'].forEach(function(id){
-    document.getElementById(id).querySelectorAll('.photo-thumb').forEach(function(e){ e.remove(); });
-  });
+  // Устанавливаем сегодняшнюю дату
+(function() {
+  var today = new Date();
+  var y = today.getFullYear();
+  var m = String(today.getMonth()+1).padStart(2,'0');
+  var d = String(today.getDate()).padStart(2,'0');
+  var todayStr = y + '-' + m + '-' + d;
+  document.getElementById('fecha').value = todayStr;
+})();
+
   ['rCliente','rObra','rFecha','rOperario','rTipo','rHoras'].forEach(function(id){ clearErr(id); });
   setTipoMode('list'); setCompMode('list');
   updateBtn();
 }
 
 /* ── INIT ── */
-document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+// Устанавливаем сегодняшнюю дату
+(function() {
+  var today = new Date();
+  var y = today.getFullYear();
+  var m = String(today.getMonth()+1).padStart(2,'0');
+  var d = String(today.getDate()).padStart(2,'0');
+  var todayStr = y + '-' + m + '-' + d;
+  document.getElementById('fecha').value = todayStr;
+})();
 document.documentElement.lang = 'es';
 apply();
 buildAllSelects();
