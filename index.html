@@ -13,9 +13,7 @@
 <link rel="shortcut icon" href="favicon.png">
 
 <script>
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzr9vricCxwcwUMtkQKhTk5UPQnEXwGq53bx4dbhZ4bqRIVOzA2FS9DE3wkrqfn4SB-/exec";
-// Прокси URL — замени на свой Cloudflare Worker URL после деплоя
-// Пример: "https://partes-proxy.your-name.workers.dev"
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxnmCxYzpa7TfghehoE1Ovn430AhwOrDCGz4bOgLvXXO-4009BFEgwfAs8D8o047Uio/exec";
 const PROXY_URL = "https://dawn-bar-50dc.bobarus2206.workers.dev";
 const PRICE_PER_HOUR = 28;
 const CLIENTES  = ["CASA FUSTER","PROCOIN","FALCK"];
@@ -473,8 +471,7 @@ function syncLists() {
   if (old) old.parentNode.removeChild(old);
   var s = document.createElement('script');
   s.id = '_gas_sync';
-  var baseUrl = PROXY_URL || WEBAPP_URL;
-  s.src = (PROXY_URL ? PROXY_URL : WEBAPP_URL) + '?action=getLists&callback=_gasCallback&t=' + Date.now();
+  s.src = (typeof PROXY_URL !== 'undefined' && PROXY_URL ? PROXY_URL : WEBAPP_URL) + '?action=getLists&callback=_gasCallback&t=' + Date.now();
   s.onerror = function() { loadCache(); };
   document.head.appendChild(s);
 }
@@ -601,42 +598,11 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
+  // Отправка через Cloudflare Worker прокси
   var dataUrl = '?action=save&t=' + Date.now() +
     '&data=' + encodeURIComponent(JSON.stringify(payload));
 
-  // Если есть прокси (Cloudflare Worker) — используем fetch
-  if (PROXY_URL) {
-    fetch(PROXY_URL + dataUrl)
-      .then(function(r) { return r.json(); })
-      .then(function(result) {
-        console.log('Proxy response:', JSON.stringify(result));
-        btn.textContent = T[lang].btnSave;
-        updateBtn();
-        if (result && result.status === 'ok') {
-          showSuccess(payload);
-        } else {
-          showToast(T[lang].toastNetErr, true);
-        }
-      })
-      .catch(function(err) {
-        console.log('Proxy error:', err.message);
-        btn.textContent = T[lang].btnSave;
-        updateBtn();
-        showToast(T[lang].toastNetErr, true);
-      });
-    return;
-  }
-
-  // Без прокси — пробуем все методы по очереди
-  sendToGAS(payload, btn);
-}
-
-function sendToGAS(payload, btn) {
-  var dataUrl = '?action=save&t=' + Date.now() +
-    '&data=' + encodeURIComponent(JSON.stringify(payload));
-
-  // Метод 1: fetch GET (работает на компьютере и Android)
-  fetch(WEBAPP_URL + dataUrl, {method:'GET', mode:'cors'})
+  fetch(PROXY_URL + dataUrl)
     .then(function(r) { return r.json(); })
     .then(function(result) {
       btn.textContent = T[lang].btnSave;
@@ -644,83 +610,15 @@ function sendToGAS(payload, btn) {
       if (result && result.status === 'ok') {
         showSuccess(payload);
       } else {
-        // Метод 2: JSONP (fallback для iOS Safari browser)
-        tryJSONP(payload, btn, dataUrl);
+        console.log('Error:', result ? result.message : 'unknown');
+        showToast(T[lang].toastNetErr, true);
       }
     })
-    .catch(function() {
-      // Метод 2: JSONP (для iOS PWA где fetch блокируется)
-      tryJSONP(payload, btn, dataUrl);
-    });
-}
-
-function tryJSONP(payload, btn, dataUrl) {
-  var cbName = '_sc' + Date.now();
-  window[cbName] = function(result) {
-    var s = document.getElementById('_gs');
-    if (s && s.parentNode) s.parentNode.removeChild(s);
-    delete window[cbName];
-    btn.textContent = T[lang].btnSave;
-    updateBtn();
-    if (result && result.status === 'ok') {
-      showSuccess(payload);
-    } else {
-      // Метод 3: Image trick (последний резерв)
-      tryImage(payload, btn, dataUrl);
-    }
-  };
-
-  var s = document.getElementById('_gs');
-  if (s && s.parentNode) s.parentNode.removeChild(s);
-  var sc = document.createElement('script');
-  sc.id = '_gs';
-  sc.onerror = function() {
-    delete window[cbName];
-    tryImage(payload, btn, dataUrl);
-  };
-  sc.src = WEBAPP_URL + dataUrl.replace('?', '?callback=' + cbName + '&');
-  document.head.appendChild(sc);
-
-  setTimeout(function() {
-    if (window[cbName]) {
-      delete window[cbName];
-      tryImage(payload, btn, dataUrl);
-    }
-  }, 6000);
-}
-
-function tryImage(payload, btn, dataUrl) {
-  var img = new Image();
-  img.onload = img.onerror = function() {
-    img.onload = img.onerror = null;
-    btn.textContent = T[lang].btnSave;
-    updateBtn();
-    // Image не даёт подтверждения — показываем успех и надеемся
-    showSuccess(payload);
-  };
-  img.src = WEBAPP_URL + dataUrl;
-  setTimeout(function() {
-    btn.textContent = T[lang].btnSave;
-    updateBtn();
-    showSuccess(payload);
-  }, 5000);
-}
-
-function verifyAndShowSuccess(payload, btn) {
-  // Попробуем подтвердить через fetch (работает на компьютере)
-  fetch(WEBAPP_URL + '?action=getRowCount&t=' + Date.now())
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      console.log('Row count:', data.count);
+    .catch(function(err) {
+      console.log('Fetch error:', err.message);
       btn.textContent = T[lang].btnSave;
       updateBtn();
-      showSuccess(payload);
-    })
-    .catch(function() {
-      // Без подтверждения — просто показываем успех
-      btn.textContent = T[lang].btnSave;
-      updateBtn();
-      showSuccess(payload);
+      showToast(T[lang].toastNetErr, true);
     });
 }
 
