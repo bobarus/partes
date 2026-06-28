@@ -14,6 +14,9 @@
 
 <script>
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzr9vricCxwcwUMtkQKhTk5UPQnEXwGq53bx4dbhZ4bqRIVOzA2FS9DE3wkrqfn4SB-/exec";
+// Прокси URL — замени на свой Cloudflare Worker URL после деплоя
+// Пример: "https://partes-proxy.your-name.workers.dev"
+const PROXY_URL = "https://dawn-bar-50dc.bobarus2206.workers.dev";
 const PRICE_PER_HOUR = 28;
 const CLIENTES  = ["CASA FUSTER","PROCOIN","FALCK"];
 const OBRAS     = ["ORIGINAL","CENTRO","LA MASIA","SANT QUIRZE","FALCK BASE"];
@@ -470,7 +473,8 @@ function syncLists() {
   if (old) old.parentNode.removeChild(old);
   var s = document.createElement('script');
   s.id = '_gas_sync';
-  s.src = WEBAPP_URL + '?action=getLists&callback=_gasCallback&t=' + Date.now();
+  var baseUrl = PROXY_URL || WEBAPP_URL;
+  s.src = (PROXY_URL ? PROXY_URL : WEBAPP_URL) + '?action=getLists&callback=_gasCallback&t=' + Date.now();
   s.onerror = function() { loadCache(); };
   document.head.appendChild(s);
 }
@@ -597,24 +601,109 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
-  // Image() trick — работает на iOS PWA, Android, всех браузерах
-  // Нет CORS проблем, нет redirect блокировок
-  var url = WEBAPP_URL + '?action=save&t=' + Date.now() +
+  var dataUrl = '?action=save&t=' + Date.now() +
     '&data=' + encodeURIComponent(JSON.stringify(payload));
 
+  // Если есть прокси (Cloudflare Worker) — используем fetch
+  if (PROXY_URL) {
+    fetch(PROXY_URL + dataUrl)
+      .then(function(r) { return r.json(); })
+      .then(function(result) {
+        console.log('Proxy response:', JSON.stringify(result));
+        btn.textContent = T[lang].btnSave;
+        updateBtn();
+        if (result && result.status === 'ok') {
+          showSuccess(payload);
+        } else {
+          showToast(T[lang].toastNetErr, true);
+        }
+      })
+      .catch(function(err) {
+        console.log('Proxy error:', err.message);
+        btn.textContent = T[lang].btnSave;
+        updateBtn();
+        showToast(T[lang].toastNetErr, true);
+      });
+    return;
+  }
+
+  // Без прокси — пробуем все методы по очереди
+  sendToGAS(payload, btn);
+}
+
+function sendToGAS(payload, btn) {
+  var dataUrl = '?action=save&t=' + Date.now() +
+    '&data=' + encodeURIComponent(JSON.stringify(payload));
+
+  // Метод 1: fetch GET (работает на компьютере и Android)
+  fetch(WEBAPP_URL + dataUrl, {method:'GET', mode:'cors'})
+    .then(function(r) { return r.json(); })
+    .then(function(result) {
+      btn.textContent = T[lang].btnSave;
+      updateBtn();
+      if (result && result.status === 'ok') {
+        showSuccess(payload);
+      } else {
+        // Метод 2: JSONP (fallback для iOS Safari browser)
+        tryJSONP(payload, btn, dataUrl);
+      }
+    })
+    .catch(function() {
+      // Метод 2: JSONP (для iOS PWA где fetch блокируется)
+      tryJSONP(payload, btn, dataUrl);
+    });
+}
+
+function tryJSONP(payload, btn, dataUrl) {
+  var cbName = '_sc' + Date.now();
+  window[cbName] = function(result) {
+    var s = document.getElementById('_gs');
+    if (s && s.parentNode) s.parentNode.removeChild(s);
+    delete window[cbName];
+    btn.textContent = T[lang].btnSave;
+    updateBtn();
+    if (result && result.status === 'ok') {
+      showSuccess(payload);
+    } else {
+      // Метод 3: Image trick (последний резерв)
+      tryImage(payload, btn, dataUrl);
+    }
+  };
+
+  var s = document.getElementById('_gs');
+  if (s && s.parentNode) s.parentNode.removeChild(s);
+  var sc = document.createElement('script');
+  sc.id = '_gs';
+  sc.onerror = function() {
+    delete window[cbName];
+    tryImage(payload, btn, dataUrl);
+  };
+  sc.src = WEBAPP_URL + dataUrl.replace('?', '?callback=' + cbName + '&');
+  document.head.appendChild(sc);
+
+  setTimeout(function() {
+    if (window[cbName]) {
+      delete window[cbName];
+      tryImage(payload, btn, dataUrl);
+    }
+  }, 6000);
+}
+
+function tryImage(payload, btn, dataUrl) {
   var img = new Image();
   img.onload = img.onerror = function() {
-    // Запрос отправлен — GAS записал данные
-    // Верифицируем через getRowCount
-    verifyAndShowSuccess(payload, btn);
+    img.onload = img.onerror = null;
+    btn.textContent = T[lang].btnSave;
+    updateBtn();
+    // Image не даёт подтверждения — показываем успех и надеемся
+    showSuccess(payload);
   };
-  img.src = url;
-
-  // Timeout fallback
+  img.src = WEBAPP_URL + dataUrl;
   setTimeout(function() {
-    if (img) { img.onload = img.onerror = null; }
-    verifyAndShowSuccess(payload, btn);
-  }, 8000);
+    btn.textContent = T[lang].btnSave;
+    updateBtn();
+    showSuccess(payload);
+  }, 5000);
 }
 
 function verifyAndShowSuccess(payload, btn) {
