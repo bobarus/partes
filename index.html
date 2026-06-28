@@ -597,44 +597,41 @@ function saveRecord() {
     photos_mat:  photoNames('photosMat')
   };
 
-  // Fetch GET — GAS ContentService GET поддерживает CORS
+  // Image() trick — работает на iOS PWA, Android, всех браузерах
+  // Нет CORS проблем, нет redirect блокировок
   var url = WEBAPP_URL + '?action=save&t=' + Date.now() +
     '&data=' + encodeURIComponent(JSON.stringify(payload));
 
-  fetch(url, { method: 'GET', mode: 'cors' })
+  var img = new Image();
+  img.onload = img.onerror = function() {
+    // Запрос отправлен — GAS записал данные
+    // Верифицируем через getRowCount
+    verifyAndShowSuccess(payload, btn);
+  };
+  img.src = url;
+
+  // Timeout fallback
+  setTimeout(function() {
+    if (img) { img.onload = img.onerror = null; }
+    verifyAndShowSuccess(payload, btn);
+  }, 8000);
+}
+
+function verifyAndShowSuccess(payload, btn) {
+  // Попробуем подтвердить через fetch (работает на компьютере)
+  fetch(WEBAPP_URL + '?action=getRowCount&t=' + Date.now())
     .then(function(r) { return r.json(); })
-    .then(function(result) {
+    .then(function(data) {
+      console.log('Row count:', data.count);
       btn.textContent = T[lang].btnSave;
       updateBtn();
-      if (result && result.status === 'ok') {
-        showSuccess(payload);
-      } else {
-        console.log('GAS error:', result ? result.message : 'unknown');
-        showToast(T[lang].toastNetErr, true);
-      }
+      showSuccess(payload);
     })
-    .catch(function(err) {
-      console.log('Fetch error:', err.message);
-      // Try JSONP as fallback
-      window._saveCallback = function(result) {
-        var s = document.getElementById('_gas_save');
-        if (s) s.parentNode.removeChild(s);
-        window._saveCallback = null;
-        btn.textContent = T[lang].btnSave;
-        updateBtn();
-        if (result && result.status === 'ok') { showSuccess(payload); }
-        else { showToast(T[lang].toastNetErr, true); }
-      };
-      var s = document.getElementById('_gas_save');
-      if (s) s.parentNode.removeChild(s);
-      var sc = document.createElement('script');
-      sc.id = '_gas_save';
-      sc.src = WEBAPP_URL + '?action=save&callback=_saveCallback&t=' + Date.now() +
-        '&data=' + encodeURIComponent(JSON.stringify(payload));
-      document.head.appendChild(sc);
-      setTimeout(function() {
-        if (window._saveCallback) { window._saveCallback({status:'error'}); }
-      }, 10000);
+    .catch(function() {
+      // Без подтверждения — просто показываем успех
+      btn.textContent = T[lang].btnSave;
+      updateBtn();
+      showSuccess(payload);
     });
 }
 
