@@ -263,8 +263,19 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
   background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
   background-color:#5a96f0;
   flex-direction:column;align-items:center;justify-content:flex-start;
-  padding:calc(env(safe-area-inset-top,0px) + 52px) 20px 36px;
-  gap:18px;overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+#successScreen .ss-scroll{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  width:100%;
+  display:flex;flex-direction:column;align-items:center;
+  padding:calc(env(safe-area-inset-top,0px) + 52px) 20px 16px;
+  gap:18px;
+}
+#successScreen .ss-footer{
+  width:100%;flex-shrink:0;
+  padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 16px);
+  background:linear-gradient(0deg,rgba(90,140,230,0.6) 0%,rgba(90,140,230,0) 100%);
+  display:flex;flex-direction:column;gap:10px;
 }
 #successScreen.show{display:flex}
 
@@ -272,7 +283,6 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 .success-icon{
   width:90px;height:90px;border-radius:50%;
   background:linear-gradient(145deg,#6aaaf8,#2a55d0);
-  border:2px solid rgba(255,255,255,0.55);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   box-shadow:0 8px 28px rgba(42,80,200,0.35);
   opacity:0;transform:scale(0.4);
@@ -497,17 +507,19 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 
 <!-- SUCCESS SCREEN -->
 <div id="successScreen">
-  <div class="success-icon">
-    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <div class="ss-scroll">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div style="text-align:center;width:100%">
+      <div class="success-title" id="successTitle">¡Informe enviado!</div>
+      <div class="success-sub" id="successSub">El parte ha sido registrado correctamente</div>
+    </div>
+    <div class="success-details-card">
+      <div id="detailRows"></div>
+    </div>
   </div>
-  <div style="text-align:center;width:100%">
-    <div class="success-title" id="successTitle">¡Informe enviado!</div>
-    <div class="success-sub" id="successSub">El parte ha sido registrado correctamente</div>
-  </div>
-  <div class="success-details-card">
-    <div id="detailRows"></div>
-  </div>
-  <div class="success-btns">
+  <div class="ss-footer">
     <button class="btn-share" onclick="shareRecord()">
       <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       <span id="shareLabel">Compartir</span>
@@ -834,16 +846,16 @@ function showSuccess(payload) {
     }, 1300 + i * 80);
   });
 
-  // animate buttons
-  var btns = document.querySelector('.success-btns');
-  if (btns) {
-    btns.style.opacity = '0';
-    btns.style.transform = 'translateY(14px)';
-    btns.style.transition = 'none';
+  // animate footer buttons
+  var footer = document.querySelector('.ss-footer');
+  if (footer) {
+    footer.style.opacity = '0';
+    footer.style.transform = 'translateY(20px)';
+    footer.style.transition = 'none';
     setTimeout(function(){
-      btns.style.transition = 'opacity .4s ease, transform .4s ease';
-      btns.style.opacity = '1';
-      btns.style.transform = 'translateY(0)';
+      footer.style.transition = 'opacity .4s ease, transform .4s ease';
+      footer.style.opacity = '1';
+      footer.style.transform = 'translateY(0)';
     }, 1300 + drows.length * 80 + 100);
   }
 }
@@ -852,21 +864,30 @@ function shareRecord() {
   if (!_sharePayload) return;
   var p = _sharePayload;
   var t = T[lang];
-  var lines = [t.successTitle, '---'];
-  if (p.fecha)      lines.push(t.lFecha+': '+p.fecha.split('-').reverse().join('.'));
-  if (p.cliente)    lines.push(t.lCliente+': '+p.cliente);
-  if (p.obra)       lines.push(t.lObra+': '+p.obra);
-  if (p.operario)   lines.push(t.lOp+': '+p.operario);
-  if (p.ayudante)   lines.push(t.lAy+': '+p.ayudante);
-  if (p.vehiculo)   lines.push(t.lVeh+': '+p.vehiculo);
-  if (p.tipo)       lines.push(t.lTipo+': '+(p.tipo.split(' / ')[lang==='ru'?1:0]||p.tipo));
-  if (p.horas)      lines.push(t.lHoras+': '+p.horas+' h');
-  if (p.trabajos)   lines.push(t.lTrab+': '+p.trabajos);
-  if (p.compania)   lines.push(t.lComp+': '+p.compania);
-  if (p.materiales) lines.push(t.lMat+': '+p.materiales);
-  if (p.precio>0)   lines.push(t.lPrecio+': '+p.precio+' €');
-  var txt = lines.join('\n');
-  if (navigator.share) navigator.share({title:t.successTitle,text:txt}).catch(function(){});
+  var sep = '─────────────────';
+  var lines = ['📋 '+t.successTitle, sep];
+  if (p.fecha)      lines.push('📅 '+t.lFecha+':  '+p.fecha.split('-').reverse().join('.'));
+  if (p.cliente)    lines.push('🏢 '+t.lCliente+':  '+p.cliente);
+  if (p.obra)       lines.push('📍 '+t.lObra+':  '+p.obra);
+  if (p.operario)   lines.push('👷 '+t.lOp+':  '+p.operario);
+  if (p.ayudante)   lines.push('👷 '+t.lAy+':  '+p.ayudante);
+  if (p.vehiculo)   lines.push('🚗 '+t.lVeh+':  '+p.vehiculo);
+  if (p.tipo) {
+    var ts = p.tipo.split(' / ')[lang==='ru'?1:0]||p.tipo;
+    lines.push('🔧 '+t.lTipo+':  '+ts);
+  }
+  if (p.horas)      lines.push('⏱ '+t.lHoras+':  '+p.horas+' h');
+  if (p.trabajos)   lines.push(sep+'
+📝 '+t.lTrab+':
+'+p.trabajos);
+  if (p.compania)   lines.push(sep+'
+🏪 '+t.lComp+':  '+p.compania);
+  if (p.materiales) lines.push('📦 '+t.lMat+':
+'+p.materiales);
+  if (p.precio>0)   lines.push('💶 '+t.lPrecio+':  '+p.precio+' €');
+  var txt = lines.join('
+');
+  if (navigator.share) navigator.share({title:t.successTitle, text:txt}).catch(function(){});
   else navigator.clipboard.writeText(txt).then(function(){showToast('Copiado ✓',false);}).catch(function(){showToast('Copiado ✓',false);});
 }
 
@@ -889,8 +910,8 @@ function startNew() {
   if (sub) { sub.style.animation='none'; sub.style.opacity='0'; sub.style.transform='translateY(8px)'; }
   var card = sc.querySelector('.success-details-card');
   if (card) { card.style.animation='none'; card.style.opacity='0'; }
-  var btns = sc.querySelector('.success-btns');
-  if (btns) { btns.style.transition='none'; btns.style.opacity='0'; btns.style.transform='translateY(14px)'; }
+  var footer = sc.querySelector('.ss-footer');
+  if (footer) { footer.style.transition='none'; footer.style.opacity='0'; footer.style.transform='translateY(20px)'; }
   clearForm(true);
   window.scrollTo({top:0, behavior:'smooth'});
 }
