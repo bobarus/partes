@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PARTE">
-<meta name="theme-color" content="#6a9ef5">
+<meta name="theme-color" content="#5a8ee8">
 <title>Parte de Trabajo</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -34,7 +34,7 @@ const TIPOS = [
   "Montaje / Монтаж",
   "Desmontaje / Демонтаж оборудования",
   "Mantenimiento / Техническое обслуживание",
-  "Inspección y control / Проверка и контроль",
+  "Inspección y control / Проверка y контроль",
   "Replanteo / Разбивочные работы",
   "Otros / Прочие работы"
 ];
@@ -49,7 +49,7 @@ function _gasCallback(json) {
     if (d.companias && d.companias.length) { COMPANIAS.length=0; d.companias.forEach(function(v){COMPANIAS.push(v);}); }
     if (d.tipos     && d.tipos.length)     { TIPOS.length=0;     d.tipos.forEach(function(v){TIPOS.push(v);}); }
     buildAllSelects();
-    try { localStorage.setItem('partes_lists', JSON.stringify(d)); } catch(e){}
+    try { localStorage.setItem('partes_lists', JSON.stringify(d)); } catch(e) {}
   } catch(e) {}
 }
 </script>
@@ -57,82 +57,75 @@ function _gasCallback(json) {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
+/* html bg covers iOS rubber-band overscroll top & bottom */
 html{
-  min-height:100%;
-  /* top overscroll = dark blue, bottom = light blue */
-  background:linear-gradient(180deg, #4a82e8 0%, #4a82e8 50%, #dce9fb 50%, #dce9fb 100%);
-  background-size:100% 200%;
-  background-position:0 50%;
+  height:100%;
+  background:#5a8ee8;
 }
+
 body{
   min-height:100%;
+  min-height:100dvh;
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
-  background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
+  /* gradient fixed so it never scrolls */
+  background:radial-gradient(ellipse 100% 100% at 50% 40%, #4a82e8 0%, #6fa0f0 20%, #9ec0f7 45%, #ccdcf9 70%, #e6f0fc 100%);
   background-attachment:fixed;
-  background-color:#dce9fb;
-  padding-top:calc(env(safe-area-inset-top,0px) + 70px);
-  padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);
-  overscroll-behavior-y:auto;
-  min-height:100dvh;
+  /* padding-top = fixed nav height + safe area */
+  padding-top:calc(env(safe-area-inset-top,0px) + 68px);
+  padding-bottom:calc(env(safe-area-inset-bottom,0px) + 24px);
 }
 
-
-
-
-/* ── NAV ── */
+/* ── FIXED NAV ── */
 .nav{
-  display:flex;align-items:center;justify-content:space-between;
   position:fixed;
   top:0;left:0;right:0;
   z-index:100;
-  padding-top:calc(env(safe-area-inset-top,0px) + 12px);
-  padding-bottom:14px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:calc(env(safe-area-inset-top,0px) + 10px);
+  padding-bottom:12px;
   padding-left:18px;
   padding-right:18px;
-  background:rgba(100,150,240,0.35);
+  background:rgba(80,130,230,0.3);
   backdrop-filter:blur(20px);
   -webkit-backdrop-filter:blur(20px);
-  border-bottom:0.5px solid rgba(255,255,255,0.25);
-}
-
-/* push content below fixed nav */
-body > .slabel:first-of-type,
-body > div:first-of-type{
-  margin-top:0;
 }
 .nav-center{flex:1;text-align:center}
-.nav-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;text-shadow:0 1px 6px rgba(30,70,160,0.2)}
+.nav-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px}
 .nav-side{width:38px;display:flex;justify-content:center}
 
+/* globe */
 .globe-btn{
   width:36px;height:36px;border-radius:50%;
-  background:rgba(255,255,255,0.25);
-  border:1px solid rgba(255,255,255,0.55);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;
+  background:rgba(255,255,255,0.22);
+  border:1px solid rgba(255,255,255,0.5);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;
+  -webkit-tap-highlight-color:transparent;
 }
 .globe-btn svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
+/* lang dropdown */
 .lang-dropdown{
-  display:none;position:absolute;top:48px;right:0;
-  background:rgba(120,165,245,0.45);
+  display:none;
+  position:absolute;top:46px;right:0;
+  background:rgba(80,130,230,0.7);
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-radius:18px;overflow:hidden;min-width:160px;
-  border:1px solid rgba(255,255,255,0.6);
-  z-index:200;
+  border-radius:16px;overflow:hidden;min-width:160px;
+  border:1px solid rgba(255,255,255,0.5);
+  z-index:300;
 }
 .lang-dropdown.open{display:block}
 .lang-opt{
-  display:flex;align-items:center;gap:10px;padding:13px 16px;font-size:15px;
-  color:#fff;cursor:pointer;font-weight:500;
-  border-bottom:0.5px solid rgba(255,255,255,0.2);
-  font-family:inherit;background:none;border-left:none;border-right:none;border-top:none;
-  width:100%;text-align:left;
+  display:flex;align-items:center;gap:10px;
+  padding:13px 16px;font-size:15px;color:#fff;
+  cursor:pointer;font-weight:500;width:100%;text-align:left;
+  background:none;border:none;border-bottom:0.5px solid rgba(255,255,255,0.2);
+  font-family:inherit;
 }
 .lang-opt:last-child{border-bottom:none}
-.lang-opt.active{color:#fff;font-weight:700;background:rgba(255,255,255,0.18)}
-.lang-opt:active{background:rgba(255,255,255,0.25)}
+.lang-opt.active{font-weight:700;background:rgba(255,255,255,0.15)}
 
 /* ── SECTION LABELS ── */
 .slabel{
@@ -142,38 +135,31 @@ body > div:first-of-type{
 }
 .req-badge{
   font-size:10px;font-weight:700;color:#fff;
-  background:rgba(255,80,80,0.38);
+  background:rgba(255,70,70,0.4);
   padding:3px 9px;border-radius:10px;
   margin-left:auto;text-transform:none;letter-spacing:0.2px;
 }
 
 /* ── CARDS ── */
 .card{
-  background:rgba(255,255,255,0.38);
-  border:1px solid rgba(255,255,255,0.7);
+  background:rgba(255,255,255,0.35);
+  border:1px solid rgba(255,255,255,0.65);
   border-radius:22px;margin:0 14px;overflow:hidden;
 }
-.row{display:flex;align-items:center;padding:0 14px;min-height:54px;border-bottom:1px solid rgba(255,255,255,0.35)}
+.row{display:flex;align-items:center;padding:0 14px;min-height:54px;border-bottom:1px solid rgba(255,255,255,0.3)}
 .row:last-child{border-bottom:none}
 
 /* ── BADGES ── */
 .rbadge{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-right:12px;flex-shrink:0}
 .rbadge svg{width:15px;height:15px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-/* Identificación — lightest ice blue */
 .b-blue{background:rgba(215,232,255,0.65);border:1px solid rgba(255,255,255,0.9)}
 .b-blue svg{stroke:#4a7cd8}
-/* Personal — medium sky blue */
 .b-green{background:rgba(160,200,255,0.55);border:1px solid rgba(200,225,255,0.75)}
 .b-green svg{stroke:#2a58c0}
-/* Trabajo — rich blue */
 .b-orange{background:rgba(95,150,238,0.5);border:1px solid rgba(140,185,255,0.65)}
 .b-orange svg{stroke:#1438a0}
-/* Materiales — deep navy */
 .b-teal{background:rgba(48,98,205,0.48);border:1px solid rgba(100,148,240,0.6)}
 .b-teal svg{stroke:#0c2070}
-
-/* euro icon — no badge */
-.euro-icon{font-size:18px;font-weight:600;color:#1a3a70;margin-right:12px;flex-shrink:0;width:32px;text-align:center}
 
 /* ── ROW ELEMENTS ── */
 .rlabel{font-size:15px;font-weight:600;color:#1a2a4a;flex-shrink:0;display:flex;align-items:center;gap:4px;white-space:nowrap}
@@ -181,15 +167,24 @@ body > div:first-of-type{
 
 .rinput{flex:1;text-align:right;font-size:16px;color:#1a2a4a;border:none;outline:none;background:transparent;font-family:inherit;min-width:0;margin-left:auto}
 .rinput::placeholder{color:rgba(80,110,180,0.4)}
-input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:none}
+input[type=date].rinput{-webkit-appearance:none;appearance:none}
 
-.rselect{font-size:16px;color:rgba(40,70,150,0.55);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:right;text-align-last:right;min-width:80px;max-width:100%}
-.rselect.has-val{color:#1a2a4a;font-weight:500}
-.rselect option{direction:ltr;unicode-bidi:normal;color:#000;background:#fff}
-.rselect:focus{outline:none}
+/* select — visible, tappable */
 .sel-wrap{display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0;max-width:65%}
-.rchev{margin-left:4px;flex-shrink:0}
-.rchev svg{width:7px;height:13px;stroke:rgba(40,70,150,0.5);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.rselect{
+  font-size:16px;color:rgba(40,70,150,0.5);
+  border:none;outline:none;background:transparent;
+  font-family:inherit;
+  -webkit-appearance:none;appearance:none;
+  cursor:pointer;
+  text-align:right;text-align-last:right;
+  min-width:80px;max-width:100%;
+  /* prevent iOS zoom */
+  font-size:16px;
+}
+.rselect.has-val{color:#1a2a4a;font-weight:500}
+.rselect option{color:#000;background:#fff}
+.rchev svg{width:7px;height:13px;stroke:rgba(40,70,150,0.45);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── TEXTAREA ROWS ── */
 .tarow{flex-direction:column;align-items:flex-start;padding:12px 14px;min-height:auto}
@@ -197,66 +192,61 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 .rta{width:100%;border:none;outline:none;background:transparent;font-size:16px;color:#1a2a4a;font-family:inherit;resize:none;min-height:70px;line-height:1.6}
 .rta::placeholder{color:rgba(80,110,180,0.38)}
 
-/* ── MODE TOGGLE (tipo / compañía) ── */
-.mode-header{display:flex;align-items:center;padding:0 14px;min-height:54px;border-bottom:1px solid rgba(255,255,255,0.35)}
-.mode-toggle{display:flex;background:rgba(255,255,255,0.28);border-radius:9px;padding:2px;gap:1px;margin-left:auto;border:1px solid rgba(255,255,255,0.5)}
-.ct{font-size:12px;font-weight:600;padding:5px 13px;border-radius:7px;border:none;cursor:pointer;background:transparent;color:rgba(40,70,160,0.55);font-family:inherit}
+/* ── MODE TOGGLE ── */
+.mode-header{display:flex;align-items:center;padding:0 14px;min-height:54px;border-bottom:1px solid rgba(255,255,255,0.3)}
+.mode-toggle{display:flex;background:rgba(255,255,255,0.25);border-radius:9px;padding:2px;gap:1px;margin-left:auto;border:1px solid rgba(255,255,255,0.45)}
+.ct{font-size:12px;font-weight:600;padding:5px 13px;border-radius:7px;border:none;cursor:pointer;background:transparent;color:rgba(40,70,160,0.55);font-family:inherit;touch-action:manipulation}
 .ct.on{background:rgba(255,255,255,0.8);color:#2a50c0}
-.mode-list-row{display:flex;align-items:center;padding:0 14px;min-height:46px;border-bottom:1px solid rgba(255,255,255,0.35)}
+.mode-list-row{display:flex;align-items:center;padding:0 14px;min-height:46px;border-bottom:1px solid rgba(255,255,255,0.3)}
 .mode-list-row:last-child{border-bottom:none}
-.mode-text-row{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.35);display:none}
+.mode-text-row{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.3);display:none}
 .mode-text-input{width:100%;border:none;outline:none;background:transparent;font-size:16px;color:#1a2a4a;font-family:inherit;padding-bottom:3px;border-bottom:1.5px solid rgba(42,80,192,0.5)}
 .mode-text-input::placeholder{color:rgba(80,110,180,0.4)}
 
 /* ── HORAS ── */
 .horas-wrap{display:flex;align-items:center;gap:12px;margin-left:auto;flex-shrink:0}
 .step-btn{
-  width:30px;height:30px;border-radius:50%;border:none;cursor:pointer;
+  width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   font-size:20px;font-weight:300;line-height:1;
+  background:rgba(255,255,255,0.45);
+  border:1px solid rgba(255,255,255,0.75);
+  color:#1a3080;
   touch-action:manipulation;
 }
-.step-minus{
-  background:rgba(255,255,255,0.45);
-  border:1px solid rgba(255,255,255,0.75);
-  color:#2a4090;
-}
-.step-plus{
-  background:rgba(255,255,255,0.45);
-  border:1px solid rgba(255,255,255,0.75);
-  color:#2a4090;
-}
-.step-minus:active,.step-plus:active{background:rgba(255,255,255,0.65)}
+.step-btn:active{background:rgba(255,255,255,0.7)}
 .horas-display{position:relative;width:44px;height:36px;display:flex;align-items:center;justify-content:center}
 .horas-num{font-size:22px;font-weight:700;color:#1a2040;pointer-events:none;position:relative;z-index:1}
 .horas-input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;font-size:16px;border:none;background:transparent;text-align:center}
 
 /* ── ERROR STATE ── */
-.row.err-field,.mode-header.err-field{background:rgba(255,80,80,0.08)}
+.row.err-field,.mode-header.err-field{background:rgba(255,60,60,0.07)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.2}}
 .err-field .req-dot{animation:pulse 1.2s ease infinite}
 
-/* ── BUTTONS ── */
+/* ── SAVE BUTTON ── */
 .btn-save{
   display:block;width:calc(100% - 28px);margin:22px 14px 7px;
-  background:rgba(200,215,240,0.45);
-  border:1px solid rgba(255,255,255,0.5);
-  color:rgba(255,255,255,0.6);border-radius:18px;
-  padding:16px;font-size:17px;font-weight:700;font-family:inherit;
-  cursor:not-allowed;transition:all .2s;
+  background:rgba(200,215,240,0.4);
+  border:1px solid rgba(255,255,255,0.45);
+  color:rgba(255,255,255,0.55);
+  border-radius:18px;padding:16px;
+  font-size:17px;font-weight:700;font-family:inherit;
+  cursor:not-allowed;transition:background .2s,color .2s,box-shadow .2s;
+  touch-action:manipulation;
 }
 .btn-save.ready{
   background:linear-gradient(135deg,#4a7ae8,#2a50c0);
-  border-color:transparent;
-  color:#fff;cursor:pointer;
+  border-color:transparent;color:#fff;cursor:pointer;
   box-shadow:0 4px 18px rgba(42,80,192,0.35);
 }
 .btn-save.ready:active{opacity:.88;transform:scale(.98)}
-.btn-save,.btn-clear,.btn-share,.btn-new{touch-action:manipulation}
 .btn-clear{
   display:block;width:calc(100% - 28px);margin:0 14px 20px;
   text-align:center;font-size:14px;font-weight:500;
-  color:rgba(220,60,60,0.5);background:none;border:none;cursor:pointer;padding:8px;font-family:inherit;
+  color:rgba(220,60,60,0.5);background:none;border:none;
+  cursor:pointer;padding:8px;font-family:inherit;
+  touch-action:manipulation;
 }
 
 /* ── SPINNER ── */
@@ -264,33 +254,25 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── TOAST ── */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:rgba(20,30,60,0.88);color:#fff;border-radius:14px;padding:12px 22px;font-size:14px;font-weight:500;white-space:nowrap;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(20,30,60,0.9);color:#fff;border-radius:14px;padding:12px 22px;font-size:14px;font-weight:500;white-space:nowrap;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
-@keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
 
 /* ── SUCCESS SCREEN ── */
 #successScreen{
   display:none;position:fixed;inset:0;z-index:9999;
-  background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
-  background-color:#dce9fb;
+  background:radial-gradient(ellipse 100% 100% at 50% 40%, #4a82e8 0%, #6fa0f0 20%, #9ec0f7 45%, #ccdcf9 70%, #e6f0fc 100%);
   flex-direction:column;align-items:center;justify-content:flex-start;
-}
-#successScreen .ss-scroll{
-  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  width:100%;
-  display:flex;flex-direction:column;align-items:center;
-  padding:calc(env(safe-area-inset-top,0px) + 52px) 20px 16px;
-  gap:18px;
-}
-#successScreen .ss-footer{
-  width:100%;flex-shrink:0;
-  padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 16px);
-  background:linear-gradient(0deg,rgba(90,140,230,0.6) 0%,rgba(90,140,230,0) 100%);
-  display:flex;flex-direction:column;gap:10px;
 }
 #successScreen.show{display:flex}
 
-/* icon — animate in */
+.ss-scroll{
+  flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  width:100%;display:flex;flex-direction:column;align-items:center;
+  padding:calc(env(safe-area-inset-top,0px) + 52px) 20px 16px;
+  gap:18px;
+}
+
+/* success icon */
 .success-icon{
   width:90px;height:90px;border-radius:50%;
   background:linear-gradient(145deg,#6aaaf8,#2a55d0);
@@ -300,12 +282,8 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
   animation:siPopIn .55s cubic-bezier(.34,1.56,.64,1) .1s forwards;
 }
 .success-icon svg{width:46px;height:46px;stroke:#fff;fill:none;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
-.success-icon svg polyline{
-  stroke-dasharray:30;stroke-dashoffset:30;
-  animation:siDraw .4s ease .65s forwards;
-}
+.success-icon svg polyline{stroke-dasharray:30;stroke-dashoffset:30;animation:siDraw .4s ease .65s forwards}
 
-/* title */
 .success-title{
   font-size:26px;font-weight:700;color:#0d2260;text-align:center;letter-spacing:-0.3px;
   opacity:0;transform:translateY(12px);
@@ -316,14 +294,11 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
   opacity:0;transform:translateY(8px);
   animation:siFadeUp .4s ease 1.1s forwards;
 }
-
-/* card */
 .success-details-card{
   width:100%;background:rgba(255,255,255,0.42);
   border:1px solid rgba(255,255,255,0.75);
   border-radius:20px;overflow:hidden;
-  opacity:0;
-  animation:siFadeUp .4s ease 1.25s forwards;
+  opacity:0;animation:siFadeUp .4s ease 1.25s forwards;
 }
 .detail-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.4);opacity:0}
 .detail-row:last-child{border-bottom:none}
@@ -331,17 +306,19 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 .detail-key{font-size:13px;color:rgba(20,50,130,0.55);font-weight:500}
 .detail-val{font-size:14px;color:#0d2260;font-weight:600}
 
-/* buttons */
-.success-btns{
-  width:100%;display:flex;flex-direction:column;gap:10px;
-  opacity:0;transform:translateY(14px);
+/* footer pinned to bottom */
+.ss-footer{
+  width:100%;flex-shrink:0;
+  padding:12px 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+  background:linear-gradient(0deg,rgba(60,110,220,0.45) 0%,rgba(60,110,220,0) 100%);
+  display:flex;flex-direction:column;gap:10px;
 }
 .btn-share{
   width:100%;
   background:linear-gradient(135deg,rgba(120,170,255,0.45),rgba(80,130,240,0.3));
-  border:1px solid rgba(255,255,255,0.7);
-  color:#0d2260;border-radius:16px;padding:14px;font-size:16px;font-weight:600;
-  font-family:inherit;cursor:pointer;
+  border:1px solid rgba(255,255,255,0.65);
+  color:#0d2260;border-radius:16px;padding:14px;
+  font-size:16px;font-weight:600;font-family:inherit;cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:8px;
   touch-action:manipulation;
 }
@@ -354,11 +331,12 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
   touch-action:manipulation;
 }
 
-/* keyframes */
+/* animations */
 @keyframes siPopIn{to{opacity:1;transform:scale(1)}}
 @keyframes siDraw{to{stroke-dashoffset:0}}
 @keyframes siFadeUp{to{opacity:1;transform:translateY(0)}}
 @keyframes siRowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
@@ -369,12 +347,12 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
     <div class="nav-title" id="nTitle">Parte de trabajo</div>
   </div>
   <div class="nav-side" style="justify-content:flex-end">
-    <div class="globe-btn" id="globeWrap" onclick="toggleLang(event)">
+    <div class="globe-btn" id="globeWrap">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       <div class="lang-dropdown" id="langDrop">
-        <button class="lang-opt active" id="optEs" onclick="setL('es')">🇪🇸 Español</button>
-        <button class="lang-opt" id="optRu" onclick="setL('ru')">🇷🇺 Русский</button>
-        <button class="lang-opt" id="optEn" onclick="setL('en')">🇬🇧 English</button>
+        <button class="lang-opt active" id="optEs">🇪🇸 Español</button>
+        <button class="lang-opt" id="optRu">🇷🇺 Русский</button>
+        <button class="lang-opt" id="optEn">🇬🇧 English</button>
       </div>
     </div>
   </div>
@@ -402,7 +380,7 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
   <div class="row" id="rFecha">
     <div class="rbadge b-blue"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
     <span class="rlabel" id="lFecha">Fecha <span class="req-dot"></span></span>
-    <input type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="margin-left:auto;border:none;outline:none;background:transparent;font-family:inherit;font-size:15px;color:#1a2a4a;-webkit-appearance:none;cursor:pointer">
+    <input type="date" id="fecha" onchange="clearErr('rFecha');updateBtn()" style="margin-left:auto;border:none;outline:none;background:transparent;font-family:inherit;font-size:16px;color:#1a2a4a;-webkit-appearance:none;cursor:pointer">
   </div>
 </div>
 
@@ -445,18 +423,17 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
   </div>
   <div class="mode-list-row" id="tipoListRow">
     <span style="flex:1"></span>
-    <select class="rselect" id="tipo" style="font-size:14px" onchange="onSel(this,'rTipo')"></select>
+    <select class="rselect" id="tipo" onchange="onSel(this,'rTipo')"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="tipoTextRow">
     <input class="mode-text-input" id="tipoNew" oninput="clearErr('rTipo');updateBtn()">
   </div>
-
   <div class="row" id="rHoras">
     <div class="rbadge b-orange"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
     <span class="rlabel" id="lHoras">Horas <span class="req-dot"></span></span>
     <div class="horas-wrap">
-      <button class="step-btn step-minus" onclick="changeHoras(-1)">−</button>
+      <button class="step-btn" id="btnMinus" onclick="changeHoras(-1)">−</button>
       <div class="horas-display">
         <span class="horas-num" id="horasVal">0</span>
         <input type="number" class="horas-input" id="horas" value="0" min="0" inputmode="numeric"
@@ -464,10 +441,9 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
           onblur="if(!this.value){this.value='0';document.getElementById('horasVal').textContent='0';}updateBtn();"
           oninput="var n=Math.max(0,parseInt(this.value)||0);document.getElementById('horasVal').textContent=n;updateBtn()">
       </div>
-      <button class="step-btn step-plus" onclick="changeHoras(1)">+</button>
+      <button class="step-btn" id="btnPlus" onclick="changeHoras(1)">+</button>
     </div>
   </div>
-
   <div class="row tarow">
     <span class="sub-label" id="lTrab">Trabajos realizados</span>
     <textarea class="rta" id="trabajos"></textarea>
@@ -487,18 +463,16 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
   </div>
   <div class="mode-list-row" id="compListRow">
     <span style="flex:1"></span>
-    <select class="rselect" id="compania" style="min-width:80px" onchange="this.classList.toggle('has-val',!!this.value)"></select>
+    <select class="rselect" id="compania" onchange="this.classList.toggle('has-val',!!this.value)"></select>
     <span class="rchev"><svg viewBox="0 0 8 14"><polyline points="1,1 7,7 1,13"/></svg></span>
   </div>
   <div class="mode-text-row" id="compTextRow">
     <input class="mode-text-input" id="companiaNew">
   </div>
-
   <div class="row tarow">
     <span class="sub-label" id="lMat">Materiales utilizados</span>
     <textarea class="rta" id="materiales"></textarea>
   </div>
-
   <div class="row" style="min-height:60px">
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
       <span style="font-size:20px;font-weight:700;color:#1a3a80;line-height:1">€</span>
@@ -535,7 +509,7 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
       <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       <span id="shareLabel">Compartir</span>
     </button>
-    <button class="btn-share" onclick="openPhotoForm()" id="btnAddPhoto">
+    <button class="btn-share" onclick="openPhotoForm()">
       <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#0d2260;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2l-2-3H7L5 7z"/><circle cx="10" cy="13" r="3"/></svg>
       <span id="btnAddPhotoText">Añadir fotos</span>
     </button>
@@ -546,7 +520,8 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 <script>
 /* ── TRANSLATIONS ── */
 var T = {
-  es:{title:'Parte de trabajo',s1:'Identificación',s1req:'• obligatorio',s2:'Personal',s3:'Trabajo',s5:'Materiales',
+  es:{
+    title:'Parte de trabajo',s1:'Identificación',s1req:'• obligatorio',s2:'Personal',s3:'Trabajo',s5:'Materiales',
     lCliente:'Cliente',lObra:'Obra',lFecha:'Fecha',lOp:'Operario',lAy:'Ayudante',lVeh:'Vehículo',
     lTipo:'Tipo',lHoras:'Horas',lTrab:'Trabajos realizados',lComp:'Compañía',lMat:'Materiales utilizados',lPrecio:'Precio',
     btnSave:'Guardar registro',btnClear:'Borrar todo',
@@ -554,11 +529,12 @@ var T = {
     ctList:'Lista',ctOtro:'Otro',ctNew:'Nueva',
     selPh:'Seleccione',ayNone:'Sin ayudante',
     vehPh:'Matrícula / modelo',tipoNewPh:'Describir tipo...',compPh:'Nombre de la compañía...',
-    trabPh:'Describir los trabajos...',matPh:'Listar materiales...',horasPh:'0',precPh:'0.00',
-    confirmClear:'¿Borrar todo?',shareLabel:'Compartir',
-    successTitle:'¡Informe enviado!',successSub:'El parte ha sido registrado correctamente',
-    addPhoto:'Añadir fotos',successNew:'+ Nuevo registro'},
-  ru:{title:'Отчёт',s1:'Идентификация',s1req:'• обязательно',s2:'Персонал',s3:'Работы',s5:'Материалы',
+    trabPh:'Describir los trabajos...',matPh:'Listar materiales...',precPh:'0.00',
+    confirmClear:'¿Borrar todo?',shareLabel:'Compartir',addPhoto:'Añadir fotos',
+    successTitle:'¡Informe enviado!',successSub:'El parte ha sido registrado correctamente',successNew:'+ Nuevo registro'
+  },
+  ru:{
+    title:'Отчёт',s1:'Идентификация',s1req:'• обязательно',s2:'Персонал',s3:'Работы',s5:'Материалы',
     lCliente:'Клиент',lObra:'Объект',lFecha:'Дата',lOp:'Исполнитель',lAy:'Помощник',lVeh:'Транспорт',
     lTipo:'Тип',lHoras:'Часы',lTrab:'Выполненные работы',lComp:'Компания',lMat:'Использованные материалы',lPrecio:'Цена',
     btnSave:'Сохранить запись',btnClear:'Очистить',
@@ -566,11 +542,12 @@ var T = {
     ctList:'Список',ctOtro:'Другое',ctNew:'Новая',
     selPh:'Выберите',ayNone:'Без помощника',
     vehPh:'Номер / модель авто',tipoNewPh:'Описать тип...',compPh:'Название компании...',
-    trabPh:'Описать работы...',matPh:'Перечислить материалы...',horasPh:'0',precPh:'0.00',
-    confirmClear:'Очистить все поля?',shareLabel:'Поделиться',
-    successTitle:'Отчёт отправлен!',successSub:'Наряд успешно зарегистрирован',
-    addPhoto:'Добавить фото',successNew:'+ Новый отчёт'},
-  en:{title:'Work report',s1:'Identification',s1req:'• required',s2:'Staff',s3:'Work',s5:'Materials',
+    trabPh:'Описать работы...',matPh:'Перечислить материалы...',precPh:'0.00',
+    confirmClear:'Очистить все поля?',shareLabel:'Поделиться',addPhoto:'Добавить фото',
+    successTitle:'Отчёт отправлен!',successSub:'Наряд успешно зарегистрирован',successNew:'+ Новый отчёт'
+  },
+  en:{
+    title:'Work report',s1:'Identification',s1req:'• required',s2:'Staff',s3:'Work',s5:'Materials',
     lCliente:'Client',lObra:'Site',lFecha:'Date',lOp:'Operative',lAy:'Assistant',lVeh:'Vehicle',
     lTipo:'Type',lHoras:'Hours',lTrab:'Work performed',lComp:'Company',lMat:'Materials used',lPrecio:'Price',
     btnSave:'Save record',btnClear:'Clear all',
@@ -578,16 +555,31 @@ var T = {
     ctList:'List',ctOtro:'Other',ctNew:'New',
     selPh:'Select',ayNone:'No assistant',
     vehPh:'Plate / model',tipoNewPh:'Describe type...',compPh:'Company name...',
-    trabPh:'Describe work...',matPh:'List materials...',horasPh:'0',precPh:'0.00',
-    confirmClear:'Clear everything?',shareLabel:'Share',
-    successTitle:'Report sent!',successSub:'Work report registered successfully',
-    addPhoto:'Add photos',successNew:'+ New report'}
+    trabPh:'Describe work...',matPh:'List materials...',precPh:'0.00',
+    confirmClear:'Clear everything?',shareLabel:'Share',addPhoto:'Add photos',
+    successTitle:'Report sent!',successSub:'Work report registered successfully',successNew:'+ New report'
+  }
 };
 var lang = 'es';
 
 /* ── LANGUAGE ── */
-function toggleLang(e) { e.stopPropagation(); document.getElementById('langDrop').classList.toggle('open'); }
-document.addEventListener('click', function(){ document.getElementById('langDrop').classList.remove('open'); });
+// Globe button toggle
+document.getElementById('globeWrap').addEventListener('click', function(e) {
+  e.stopPropagation();
+  document.getElementById('langDrop').classList.toggle('open');
+});
+// Lang option clicks
+['optEs','optRu','optEn'].forEach(function(id) {
+  document.getElementById(id).addEventListener('click', function(e) {
+    e.stopPropagation();
+    var l = id === 'optEs' ? 'es' : id === 'optRu' ? 'ru' : 'en';
+    setL(l);
+  });
+});
+// Close on outside click
+document.addEventListener('click', function() {
+  document.getElementById('langDrop').classList.remove('open');
+});
 
 function setL(l) {
   lang = l;
@@ -601,39 +593,50 @@ function setL(l) {
 
 function apply() {
   var t = T[lang];
-  document.getElementById('nTitle').textContent   = t.title;
-  document.getElementById('s1lbl').textContent    = t.s1;
-  document.getElementById('s1req').textContent    = t.s1req;
-  document.getElementById('s2lbl').textContent    = t.s2;
-  document.getElementById('s3lbl').textContent    = t.s3;
-  document.getElementById('s5lbl').textContent    = t.s5;
-  document.getElementById('btnSave').textContent  = t.btnSave;
-  document.getElementById('btnClear').textContent = t.btnClear;
-  document.getElementById('ctTL').textContent     = t.ctList;
-  document.getElementById('ctTN').textContent     = t.ctOtro;
-  document.getElementById('ctCL').textContent     = t.ctList;
-  document.getElementById('ctCN').textContent     = t.ctNew;
+  document.getElementById('nTitle').textContent    = t.title;
+  document.getElementById('s1lbl').textContent     = t.s1;
+  document.getElementById('s1req').textContent     = t.s1req;
+  document.getElementById('s2lbl').textContent     = t.s2;
+  document.getElementById('s3lbl').textContent     = t.s3;
+  document.getElementById('s5lbl').textContent     = t.s5;
+  document.getElementById('btnSave').textContent   = t.btnSave;
+  document.getElementById('btnClear').textContent  = t.btnClear;
+  document.getElementById('ctTL').textContent      = t.ctList;
+  document.getElementById('ctTN').textContent      = t.ctOtro;
+  document.getElementById('ctCL').textContent      = t.ctList;
+  document.getElementById('ctCN').textContent      = t.ctNew;
+  document.getElementById('lPrecio').textContent   = t.lPrecio;
+  // labels with req-dot — update only text node
   ['lCliente','lObra','lFecha','lOp','lTipo','lHoras'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.childNodes[0].textContent=t[id]+' ';
+    var el = document.getElementById(id);
+    if (el && el.childNodes[0]) el.childNodes[0].textContent = t[id] + ' ';
   });
-  ['lAy','lVeh','lTrab','lComp','lMat','lPrecio'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.textContent=t[id];
+  ['lAy','lVeh','lTrab','lComp','lMat'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.textContent = t[id];
   });
-  document.getElementById('vehiculo').placeholder   = t.vehPh;
-  document.getElementById('tipoNew').placeholder    = t.tipoNewPh;
-  document.getElementById('companiaNew').placeholder= t.compPh;
-  document.getElementById('trabajos').placeholder   = t.trabPh;
-  document.getElementById('materiales').placeholder = t.matPh;
-  document.getElementById('precio').placeholder     = t.precPh;
+  document.getElementById('vehiculo').placeholder    = t.vehPh;
+  document.getElementById('tipoNew').placeholder     = t.tipoNewPh;
+  document.getElementById('companiaNew').placeholder = t.compPh;
+  document.getElementById('trabajos').placeholder    = t.trabPh;
+  document.getElementById('materiales').placeholder  = t.matPh;
+  document.getElementById('precio').placeholder      = t.precPh;
 }
 
 /* ── SELECTS ── */
 function buildSelect(id, items, ph) {
   var sel = document.getElementById(id);
+  if (!sel) return;
   var prev = sel.value;
   sel.innerHTML = '';
-  var o = document.createElement('option'); o.value=''; o.textContent=ph; sel.appendChild(o);
-  items.forEach(function(v){ var op=document.createElement('option'); op.value=v; op.textContent=v; sel.appendChild(op); });
+  var o = document.createElement('option');
+  o.value = ''; o.textContent = ph;
+  sel.appendChild(o);
+  items.forEach(function(v) {
+    var op = document.createElement('option');
+    op.value = v; op.textContent = v;
+    sel.appendChild(op);
+  });
   if (prev) sel.value = prev;
   sel.classList.toggle('has-val', !!sel.value);
 }
@@ -655,7 +658,7 @@ function syncLists() {
   var s = document.createElement('script');
   s.id = '_gas_sync';
   s.src = WEBAPP_URL + '?action=getLists&callback=_gasCallback&t=' + Date.now();
-  s.onerror = function() { loadCache(); };
+  s.onerror = function() {};
   document.head.appendChild(s);
 }
 
@@ -664,11 +667,11 @@ function loadCache() {
     var c = localStorage.getItem('partes_lists');
     if (!c) return;
     var d = JSON.parse(c);
-    if (d.clientes)  { CLIENTES.length=0;  d.clientes.forEach(function(v){CLIENTES.push(v);}); }
-    if (d.obras)     { OBRAS.length=0;     d.obras.forEach(function(v){OBRAS.push(v);}); }
-    if (d.operarios) { OPERARIOS.length=0; d.operarios.forEach(function(v){OPERARIOS.push(v);}); }
-    if (d.companias) { COMPANIAS.length=0; d.companias.forEach(function(v){COMPANIAS.push(v);}); }
-    if (d.tipos)     { TIPOS.length=0;     d.tipos.forEach(function(v){TIPOS.push(v);}); }
+    if (d.clientes  && d.clientes.length)  { CLIENTES.length=0;  d.clientes.forEach(function(v){CLIENTES.push(v);}); }
+    if (d.obras     && d.obras.length)     { OBRAS.length=0;     d.obras.forEach(function(v){OBRAS.push(v);}); }
+    if (d.operarios && d.operarios.length) { OPERARIOS.length=0; d.operarios.forEach(function(v){OPERARIOS.push(v);}); }
+    if (d.companias && d.companias.length) { COMPANIAS.length=0; d.companias.forEach(function(v){COMPANIAS.push(v);}); }
+    if (d.tipos     && d.tipos.length)     { TIPOS.length=0;     d.tipos.forEach(function(v){TIPOS.push(v);}); }
     buildAllSelects();
   } catch(e) {}
 }
@@ -683,7 +686,7 @@ function setTipoMode(m) {
   document.getElementById('tipoListRow').style.display = m==='list' ? 'flex' : 'none';
   document.getElementById('tipoTextRow').style.display = m==='new'  ? 'block': 'none';
   if (m==='list') document.getElementById('tipoNew').value='';
-  else document.getElementById('tipo').selectedIndex=0;
+  else { document.getElementById('tipo').selectedIndex=0; document.getElementById('tipo').classList.remove('has-val'); }
   updateBtn();
 }
 
@@ -694,7 +697,7 @@ function setCompMode(m) {
   document.getElementById('compListRow').style.display = m==='list' ? 'flex' : 'none';
   document.getElementById('compTextRow').style.display = m==='new'  ? 'block': 'none';
   if (m==='list') document.getElementById('companiaNew').value='';
-  else document.getElementById('compania').selectedIndex=0;
+  else { document.getElementById('compania').selectedIndex=0; }
 }
 
 function getTipo() { return tipoMode==='list' ? document.getElementById('tipo').value : document.getElementById('tipoNew').value.trim(); }
@@ -707,11 +710,13 @@ function clearErr(id) { var el=document.getElementById(id); if(el) el.classList.
 
 function updateBtn() {
   var horas = parseInt(document.getElementById('horas').value)||0;
-  var ok = !!(document.getElementById('cliente').value &&
-              document.getElementById('obra').value &&
-              document.getElementById('fecha').value &&
-              document.getElementById('operario').value &&
-              getTipo() && horas > 0);
+  var ok = !!(
+    document.getElementById('cliente').value &&
+    document.getElementById('obra').value &&
+    document.getElementById('fecha').value &&
+    document.getElementById('operario').value &&
+    getTipo() && horas > 0
+  );
   document.getElementById('btnSave').classList.toggle('ready', ok);
 }
 
@@ -728,7 +733,7 @@ function changeHoras(delta) {
 function showToast(msg, err) {
   var el = document.getElementById('toast');
   el.textContent = msg;
-  el.style.background = err ? 'rgba(200,40,40,.9)' : 'rgba(20,30,60,.9)';
+  el.style.background = err ? 'rgba(200,40,40,.92)' : 'rgba(20,30,60,.92)';
   el.classList.add('show');
   setTimeout(function(){ el.classList.remove('show'); }, 3000);
 }
@@ -736,12 +741,13 @@ function showToast(msg, err) {
 /* ── SAVE ── */
 function saveRecord() {
   if (!document.getElementById('btnSave').classList.contains('ready')) {
-    [{id:'rCliente',v:document.getElementById('cliente').value},
-     {id:'rObra',   v:document.getElementById('obra').value},
-     {id:'rFecha',  v:document.getElementById('fecha').value},
-     {id:'rOperario',v:document.getElementById('operario').value},
-     {id:'rTipo',   v:getTipo()},
-     {id:'rHoras',  v:(parseInt(document.getElementById('horas').value)||0)>0?'1':''}
+    [
+      {id:'rCliente', v:document.getElementById('cliente').value},
+      {id:'rObra',    v:document.getElementById('obra').value},
+      {id:'rFecha',   v:document.getElementById('fecha').value},
+      {id:'rOperario',v:document.getElementById('operario').value},
+      {id:'rTipo',    v:getTipo()},
+      {id:'rHoras',   v:(parseInt(document.getElementById('horas').value)||0)>0?'1':''}
     ].forEach(function(c){ if(!c.v) markErr(c.id); else clearErr(c.id); });
     showToast(T[lang].toastErr, true);
     return;
@@ -802,72 +808,67 @@ function showSuccess(payload) {
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successSub').textContent   = t.successSub;
   document.getElementById('shareLabel').textContent   = t.shareLabel;
-  var addPhotoEl = document.getElementById('btnAddPhotoText');
-  if (addPhotoEl) addPhotoEl.textContent = t.addPhoto || 'Añadir fotos';
+  document.getElementById('btnAddPhotoText').textContent = t.addPhoto;
   document.getElementById('btnNew').textContent       = t.successNew;
-  var ap = document.getElementById('btnAddPhotoText'); if(ap) ap.textContent = t.addPhoto||'Añadir fotos';
-
-  // re-trigger animations
-  var sc = document.getElementById('successScreen');
-  var icon = sc.querySelector('.success-icon');
-  var poly = sc.querySelector('.success-icon svg polyline');
-  var titleEl = sc.querySelector('.success-title');
-  var subEl = sc.querySelector('.success-sub');
-  var card = sc.querySelector('.success-details-card');
-  void sc.offsetWidth;
-  if (icon){ icon.style.animation='none'; void icon.offsetWidth; icon.style.animation='siPopIn .55s cubic-bezier(.34,1.56,.64,1) .1s forwards'; }
-  if (poly){ poly.style.animation='none'; void poly.offsetWidth; poly.style.animation='siDraw .4s ease .65s forwards'; }
-  if (titleEl){ titleEl.style.animation='none'; void titleEl.offsetWidth; titleEl.style.animation='siFadeUp .4s ease .95s forwards'; }
-  if (subEl){ subEl.style.animation='none'; void subEl.offsetWidth; subEl.style.animation='siFadeUp .4s ease 1.1s forwards'; }
-  if (card){ card.style.animation='none'; void card.offsetWidth; card.style.animation='siFadeUp .4s ease 1.25s forwards'; }
 
   var rows = [];
   if (payload.fecha)      rows.push({k:t.lFecha,   v:payload.fecha.split('-').reverse().join('.')});
-  if (payload.cliente)    rows.push({k:t.lCliente, v:payload.cliente});
-  if (payload.obra)       rows.push({k:t.lObra,    v:payload.obra});
-  if (payload.operario)   rows.push({k:t.lOp,      v:payload.operario});
-  if (payload.ayudante)   rows.push({k:t.lAy,      v:payload.ayudante});
-  if (payload.vehiculo)   rows.push({k:t.lVeh,     v:payload.vehiculo});
+  if (payload.cliente)    rows.push({k:t.lCliente,  v:payload.cliente});
+  if (payload.obra)       rows.push({k:t.lObra,     v:payload.obra});
+  if (payload.operario)   rows.push({k:t.lOp,       v:payload.operario});
+  if (payload.ayudante)   rows.push({k:t.lAy,       v:payload.ayudante});
+  if (payload.vehiculo)   rows.push({k:t.lVeh,      v:payload.vehiculo});
   if (payload.tipo) {
     var ts = payload.tipo.split(' / ')[lang==='ru'?1:0] || payload.tipo;
     rows.push({k:t.lTipo, v:ts});
   }
-  if (payload.horas)      rows.push({k:t.lHoras,   v:payload.horas+' h'});
-  if (payload.trabajos)   rows.push({k:t.lTrab,    v:payload.trabajos});
-  if (payload.compania)   rows.push({k:t.lComp,    v:payload.compania});
-  if (payload.materiales) rows.push({k:t.lMat,     v:payload.materiales});
-  if (payload.precio>0)   rows.push({k:t.lPrecio,  v:payload.precio+' €'});
+  if (payload.horas)      rows.push({k:t.lHoras,    v:payload.horas+' h'});
+  if (payload.trabajos)   rows.push({k:t.lTrab,     v:payload.trabajos});
+  if (payload.compania)   rows.push({k:t.lComp,     v:payload.compania});
+  if (payload.materiales) rows.push({k:t.lMat,      v:payload.materiales});
+  if (payload.precio>0)   rows.push({k:t.lPrecio,   v:payload.precio+' €'});
 
-  document.getElementById('detailRows').innerHTML = rows.filter(function(r){return r.v;}).map(function(r){
-    var long = r.v && r.v.length > 28;
-    if (long) return '<div class="detail-row long"><span class="detail-key">'+r.k+'</span><span class="detail-val">'+r.v+'</span></div>';
-    return '<div class="detail-row"><span class="detail-key">'+r.k+'</span><span class="detail-val">'+r.v+'</span></div>';
-  }).join('');
+  document.getElementById('detailRows').innerHTML = rows
+    .filter(function(r){ return r.v; })
+    .map(function(r){
+      var long = r.v && r.v.length > 28;
+      if (long) return '<div class="detail-row long"><span class="detail-key">'+r.k+'</span><span class="detail-val">'+r.v+'</span></div>';
+      return '<div class="detail-row"><span class="detail-key">'+r.k+'</span><span class="detail-val">'+r.v+'</span></div>';
+    }).join('');
 
+  // reset + show screen
   var sc = document.getElementById('successScreen');
-  sc.classList.add('show');
+  var icon = sc.querySelector('.success-icon');
+  var poly = sc.querySelector('.success-icon svg polyline');
+  var titleEl = sc.querySelector('.success-title');
+  var subEl   = sc.querySelector('.success-sub');
+  var card    = sc.querySelector('.success-details-card');
+  var footer  = sc.querySelector('.ss-footer');
 
-  // animate rows staggered
+  if (icon)   { icon.style.animation='none';    void icon.offsetWidth;    icon.style.animation='siPopIn .55s cubic-bezier(.34,1.56,.64,1) .1s forwards'; }
+  if (poly)   { poly.style.animation='none';    void poly.offsetWidth;    poly.style.animation='siDraw .4s ease .65s forwards'; }
+  if (titleEl){ titleEl.style.animation='none'; void titleEl.offsetWidth; titleEl.style.animation='siFadeUp .4s ease .95s forwards'; }
+  if (subEl)  { subEl.style.animation='none';   void subEl.offsetWidth;   subEl.style.animation='siFadeUp .4s ease 1.1s forwards'; }
+  if (card)   { card.style.animation='none';    void card.offsetWidth;    card.style.animation='siFadeUp .4s ease 1.25s forwards'; }
+  if (footer) { footer.style.opacity='0'; footer.style.transform='translateY(20px)'; footer.style.transition='none'; }
+
+  sc.classList.add('show');
+  sc.querySelector('.ss-scroll').scrollTop = 0;
+
+  // stagger rows
   var drows = document.querySelectorAll('#detailRows .detail-row');
   drows.forEach(function(r, i){
-    r.style.opacity = '0';
-    r.style.animation = 'none';
-    setTimeout(function(){
-      r.style.animation = 'siRowIn .3s ease forwards';
-    }, 1300 + i * 80);
+    r.style.opacity='0'; r.style.animation='none';
+    setTimeout(function(){ r.style.animation='siRowIn .3s ease forwards'; }, 1300 + i*80);
   });
 
-  // animate footer buttons
-  var footer = document.querySelector('.ss-footer');
+  // animate footer
   if (footer) {
-    footer.style.opacity = '0';
-    footer.style.transform = 'translateY(20px)';
-    footer.style.transition = 'none';
     setTimeout(function(){
-      footer.style.transition = 'opacity .4s ease, transform .4s ease';
-      footer.style.opacity = '1';
-      footer.style.transform = 'translateY(0)';
-    }, 1300 + drows.length * 80 + 100);
+      footer.style.transition='opacity .4s ease, transform .4s ease';
+      footer.style.opacity='1';
+      footer.style.transform='translateY(0)';
+    }, 1300 + drows.length*80 + 100);
   }
 }
 
@@ -875,31 +876,31 @@ function shareRecord() {
   if (!_sharePayload) return;
   var p = _sharePayload;
   var t = T[lang];
-  var sep = '─────────────────';
-  var lines = ['📋 '+t.successTitle, sep];
-  if (p.fecha)      lines.push('📅 '+t.lFecha+':  '+p.fecha.split('-').reverse().join('.'));
-  if (p.cliente)    lines.push('🏢 '+t.lCliente+':  '+p.cliente);
-  if (p.obra)       lines.push('📍 '+t.lObra+':  '+p.obra);
-  if (p.operario)   lines.push('👷 '+t.lOp+':  '+p.operario);
-  if (p.ayudante)   lines.push('👷 '+t.lAy+':  '+p.ayudante);
-  if (p.vehiculo)   lines.push('🚗 '+t.lVeh+':  '+p.vehiculo);
+  var sep = '\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500';
+  var lines = ['\uD83D\uDCCB ' + t.successTitle, sep];
+  if (p.fecha)      lines.push('\uD83D\uDCC5 ' + t.lFecha + ':  ' + p.fecha.split('-').reverse().join('.'));
+  if (p.cliente)    lines.push('\uD83C\uDFE2 ' + t.lCliente + ':  ' + p.cliente);
+  if (p.obra)       lines.push('\uD83D\uDCCD ' + t.lObra + ':  ' + p.obra);
+  if (p.operario)   lines.push('\uD83D\uDC77 ' + t.lOp + ':  ' + p.operario);
+  if (p.ayudante)   lines.push('\uD83D\uDC77 ' + t.lAy + ':  ' + p.ayudante);
+  if (p.vehiculo)   lines.push('\uD83D\uDE97 ' + t.lVeh + ':  ' + p.vehiculo);
   if (p.tipo) {
-    var ts = p.tipo.split(' / ')[lang==='ru'?1:0]||p.tipo;
-    lines.push('🔧 '+t.lTipo+':  '+ts);
+    var ts = p.tipo.split(' / ')[lang==='ru'?1:0] || p.tipo;
+    lines.push('\uD83D\uDD27 ' + t.lTipo + ':  ' + ts);
   }
-  if (p.horas)      lines.push('⏱ '+t.lHoras+':  '+p.horas+' h');
-  if (p.trabajos)   lines.push(sep+'
-📝 '+t.lTrab+':
-'+p.trabajos);
-  if (p.compania)   lines.push(sep+'
-🏪 '+t.lComp+':  '+p.compania);
-  if (p.materiales) lines.push('📦 '+t.lMat+':
-'+p.materiales);
-  if (p.precio>0)   lines.push('💶 '+t.lPrecio+':  '+p.precio+' €');
-  var txt = lines.join('
-');
-  if (navigator.share) navigator.share({title:t.successTitle, text:txt}).catch(function(){});
-  else navigator.clipboard.writeText(txt).then(function(){showToast('Copiado ✓',false);}).catch(function(){showToast('Copiado ✓',false);});
+  if (p.horas)      lines.push('\u23F1 ' + t.lHoras + ':  ' + p.horas + ' h');
+  if (p.trabajos)   lines.push(sep + '\n\uD83D\uDCDD ' + t.lTrab + ':\n' + p.trabajos);
+  if (p.compania)   lines.push(sep + '\n\uD83C\uDFEA ' + t.lComp + ':  ' + p.compania);
+  if (p.materiales) lines.push('\uD83D\uDCE6 ' + t.lMat + ':\n' + p.materiales);
+  if (p.precio>0)   lines.push('\uD83D\uDCB6 ' + t.lPrecio + ':  ' + p.precio + ' \u20AC');
+  var txt = lines.join('\n');
+  if (navigator.share) {
+    navigator.share({title: t.successTitle, text: txt}).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(txt)
+      .then(function(){ showToast('Copiado \u2713', false); })
+      .catch(function(){ showToast('Copiado \u2713', false); });
+  }
 }
 
 function openPhotoForm() {
@@ -910,19 +911,6 @@ function openPhotoForm() {
 function startNew() {
   var sc = document.getElementById('successScreen');
   sc.classList.remove('show');
-  // reset icon animation for next time
-  var icon = sc.querySelector('.success-icon');
-  if (icon) { icon.style.animation='none'; icon.style.opacity='0'; icon.style.transform='scale(0.4)'; }
-  var poly = sc.querySelector('.success-icon svg polyline');
-  if (poly) { poly.style.animation='none'; poly.style.strokeDashoffset='30'; }
-  var title = sc.querySelector('.success-title');
-  if (title) { title.style.animation='none'; title.style.opacity='0'; title.style.transform='translateY(12px)'; }
-  var sub = sc.querySelector('.success-sub');
-  if (sub) { sub.style.animation='none'; sub.style.opacity='0'; sub.style.transform='translateY(8px)'; }
-  var card = sc.querySelector('.success-details-card');
-  if (card) { card.style.animation='none'; card.style.opacity='0'; }
-  var footer = sc.querySelector('.ss-footer');
-  if (footer) { footer.style.transition='none'; footer.style.opacity='0'; footer.style.transform='translateY(20px)'; }
   clearForm(true);
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -930,26 +918,37 @@ function startNew() {
 /* ── CLEAR FORM ── */
 function clearForm(skip) {
   if (!skip && !confirm(T[lang].confirmClear)) return;
-  ['vehiculo','trabajos','materiales','tipoNew','companiaNew','precio'].forEach(function(id){ document.getElementById(id).value=''; });
+  ['vehiculo','trabajos','materiales','tipoNew','companiaNew','precio'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
   ['cliente','obra','operario','ayudante','tipo','compania'].forEach(function(id){
-    var el=document.getElementById(id); el.selectedIndex=0; el.classList.remove('has-val');
+    var el = document.getElementById(id);
+    el.selectedIndex = 0;
+    el.classList.remove('has-val');
   });
   document.getElementById('horas').value = 0;
   document.getElementById('horasVal').textContent = '0';
-  (function(){var d=new Date();document.getElementById('fecha').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})();
+  (function(){
+    var d = new Date();
+    document.getElementById('fecha').value = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  })();
   ['rCliente','rObra','rFecha','rOperario','rTipo','rHoras'].forEach(function(id){ clearErr(id); });
-  setTipoMode('list'); setCompMode('list');
+  setTipoMode('list');
+  setCompMode('list');
   updateBtn();
 }
 
 /* ── INIT ── */
-(function(){var d=new Date();document.getElementById('fecha').value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})();
-document.documentElement.lang='es';
+(function(){
+  var d = new Date();
+  document.getElementById('fecha').value = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+})();
+document.documentElement.lang = 'es';
 apply();
 buildAllSelects();
 updateBtn();
 loadCache();
-setTimeout(syncLists, 500);
+setTimeout(syncLists, 1000);
 setInterval(syncLists, 30*60*1000);
 
 if ('serviceWorker' in navigator) {
