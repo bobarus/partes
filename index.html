@@ -59,7 +59,7 @@ function _gasCallback(json) {
 
 html{
   min-height:100%;
-  background:#6a9ef5;
+  background:#4a82e8;
 }
 body{
   min-height:100%;
@@ -68,7 +68,8 @@ body{
   -moz-osx-font-smoothing:grayscale;
   background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
   background-attachment:fixed;
-  background-color:#6a9ef5;
+  background-color:#4a82e8;
+  padding-top:calc(env(safe-area-inset-top,0px) + 56px);
   padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);
   overscroll-behavior-y:none;
   min-height:100dvh;
@@ -81,31 +82,27 @@ body::before{
   position:fixed;
   top:0;left:0;right:0;
   height:env(safe-area-inset-top,0px);
-  background:#5a8ee8;
+  background:#4a82e8;
   z-index:200;
 }
-/* fills overscroll bounce area bottom */
-body::after{
-  content:'';
-  display:block;
-  position:fixed;
-  bottom:0;left:0;right:0;
-  height:env(safe-area-inset-bottom,0px);
-  background:#ccdcf9;
-  z-index:200;
-}
+
 
 /* ── NAV ── */
 .nav{
   padding:14px 18px 14px;
-  margin-top:env(safe-area-inset-top,0px);
   display:flex;align-items:center;justify-content:space-between;
-  position:sticky;
+  position:fixed;
   top:env(safe-area-inset-top,0px);
+  left:0;right:0;
   z-index:100;
-  background:linear-gradient(180deg,rgba(90,150,240,0.78) 0%,rgba(120,170,248,0.6) 100%);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:0.5px solid rgba(255,255,255,0.3);
+  background:transparent;
+  border-bottom:none;
+}
+
+/* push content below fixed nav */
+body > .slabel:first-of-type,
+body > div:first-of-type{
+  margin-top:0;
 }
 .nav-center{flex:1;text-align:center}
 .nav-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;text-shadow:0 1px 6px rgba(30,70,160,0.2)}
