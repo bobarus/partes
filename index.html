@@ -184,7 +184,7 @@ input[type=date].rinput{-webkit-appearance:none;appearance:none}
 }
 .rselect.has-val{color:#1a2a4a;font-weight:500}
 .rselect option{color:#000;background:#fff}
-.rchev svg{width:7px;height:13px;stroke:rgba(40,70,150,0.45);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.rchev{margin-left:8px}.rchev svg{width:7px;height:13px;stroke:rgba(40,70,150,0.45);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── TEXTAREA ROWS ── */
 .tarow{flex-direction:column;align-items:flex-start;padding:12px 14px;min-height:auto}
@@ -249,6 +249,7 @@ input[type=date].rinput{-webkit-appearance:none;appearance:none}
   touch-action:manipulation;
 }
 
+#precioInput::placeholder{color:rgba(100,150,220,0.45)}
 /* ── SPINNER ── */
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -480,7 +481,7 @@ input[type=date].rinput{-webkit-appearance:none;appearance:none}
     </div>
     <div style="display:flex;align-items:baseline;gap:3px;margin-left:auto">
       <input type="number" id="precio" min="0" step="0.01" inputmode="decimal" placeholder="0.00"
-        style="border:none;outline:none;background:transparent;font-family:inherit;font-size:20px;font-weight:700;color:#1a2040;text-align:right;width:100px">
+        style="border:none;outline:none;background:transparent;font-family:inherit;font-size:20px;font-weight:700;color:#1a2040;text-align:right;width:100px" id="precioInput">
       <span style="font-size:14px;color:rgba(60,90,160,0.5);flex-shrink:0;font-weight:600">€</span>
     </div>
   </div>
