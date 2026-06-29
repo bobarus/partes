@@ -57,7 +57,11 @@ function _gasCallback(json) {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
-html,body{
+html{
+  min-height:100%;
+  background:#6a9ef5;
+}
+body{
   min-height:100%;
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;
   -webkit-font-smoothing:antialiased;
@@ -65,8 +69,10 @@ html,body{
   background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
   background-attachment:fixed;
   background-color:#6a9ef5;
+  padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);
+  overscroll-behavior-y:none;
+  min-height:100dvh;
 }
-body{padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);overscroll-behavior-y:contain}
 
 /* fills the status bar area on iOS PWA */
 body::before{
@@ -75,7 +81,17 @@ body::before{
   position:fixed;
   top:0;left:0;right:0;
   height:env(safe-area-inset-top,0px);
-  background:linear-gradient(180deg,#5a96f0,#6ba4f4);
+  background:#5a8ee8;
+  z-index:200;
+}
+/* fills overscroll bounce area bottom */
+body::after{
+  content:'';
+  display:block;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:env(safe-area-inset-bottom,0px);
+  background:#ccdcf9;
   z-index:200;
 }
 
