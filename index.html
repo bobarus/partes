@@ -59,7 +59,10 @@ function _gasCallback(json) {
 
 html{
   min-height:100%;
-  background:#dce9fb;
+  /* top overscroll = dark blue, bottom = light blue */
+  background:linear-gradient(180deg, #4a82e8 0%, #4a82e8 50%, #dce9fb 50%, #dce9fb 100%);
+  background-size:100% 200%;
+  background-position:0 50%;
 }
 body{
   min-height:100%;
@@ -71,7 +74,7 @@ body{
   background-color:#dce9fb;
   padding-top:calc(env(safe-area-inset-top,0px) + 70px);
   padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);
-  overscroll-behavior-y:none;
+  overscroll-behavior-y:auto;
   min-height:100dvh;
 }
 
@@ -180,13 +183,13 @@ body > div:first-of-type{
 .rinput::placeholder{color:rgba(80,110,180,0.4)}
 input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:none}
 
-.rselect{font-size:16px;color:rgba(80,110,180,0.5);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:right;text-align-last:right;min-width:80px;max-width:100%}
+.rselect{font-size:16px;color:rgba(40,70,150,0.55);border:none;outline:none;background:transparent;font-family:inherit;-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;text-align:right;text-align-last:right;min-width:80px;max-width:100%}
 .rselect.has-val{color:#1a2a4a;font-weight:500}
 .rselect option{direction:ltr;unicode-bidi:normal;color:#000;background:#fff}
 .rselect:focus{outline:none}
 .sel-wrap{display:flex;align-items:center;gap:4px;margin-left:auto;flex-shrink:0;max-width:65%}
 .rchev{margin-left:4px;flex-shrink:0}
-.rchev svg{width:7px;height:13px;stroke:rgba(80,110,180,0.4);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.rchev svg{width:7px;height:13px;stroke:rgba(40,70,150,0.5);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
 
 /* ── TEXTAREA ROWS ── */
 .tarow{flex-direction:column;align-items:flex-start;padding:12px 14px;min-height:auto}
