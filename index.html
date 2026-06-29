@@ -59,7 +59,7 @@ function _gasCallback(json) {
 
 html{
   min-height:100%;
-  background:#4a82e8;
+  background:#dce9fb;
 }
 body{
   min-height:100%;
@@ -68,35 +68,30 @@ body{
   -moz-osx-font-smoothing:grayscale;
   background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
   background-attachment:fixed;
-  background-color:#4a82e8;
-  padding-top:calc(env(safe-area-inset-top,0px) + 56px);
+  background-color:#dce9fb;
+  padding-top:calc(env(safe-area-inset-top,0px) + 70px);
   padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);
   overscroll-behavior-y:none;
   min-height:100dvh;
 }
 
-/* fills the status bar area on iOS PWA */
-body::before{
-  content:'';
-  display:block;
-  position:fixed;
-  top:0;left:0;right:0;
-  height:env(safe-area-inset-top,0px);
-  background:#4a82e8;
-  z-index:200;
-}
+
 
 
 /* ── NAV ── */
 .nav{
-  padding:14px 18px 14px;
   display:flex;align-items:center;justify-content:space-between;
   position:fixed;
-  top:env(safe-area-inset-top,0px);
-  left:0;right:0;
+  top:0;left:0;right:0;
   z-index:100;
-  background:transparent;
-  border-bottom:none;
+  padding-top:calc(env(safe-area-inset-top,0px) + 12px);
+  padding-bottom:14px;
+  padding-left:18px;
+  padding-right:18px;
+  background:rgba(100,150,240,0.35);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:0.5px solid rgba(255,255,255,0.25);
 }
 
 /* push content below fixed nav */
@@ -274,7 +269,7 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 #successScreen{
   display:none;position:fixed;inset:0;z-index:9999;
   background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
-  background-color:#5a96f0;
+  background-color:#dce9fb;
   flex-direction:column;align-items:center;justify-content:flex-start;
 }
 #successScreen .ss-scroll{
