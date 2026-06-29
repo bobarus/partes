@@ -60,7 +60,7 @@ function _gasCallback(json) {
 /* html bg covers iOS rubber-band overscroll top & bottom */
 html{
   height:100%;
-  background:#5a8ee8;
+  background:#e0ecfa;
 }
 
 body{
@@ -70,7 +70,7 @@ body{
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   /* gradient fixed so it never scrolls */
-  background:radial-gradient(ellipse 100% 100% at 50% 40%, #4a82e8 0%, #6fa0f0 20%, #9ec0f7 45%, #ccdcf9 70%, #e6f0fc 100%);
+  background:radial-gradient(ellipse 120% 130% at 50% 35%, #4a82e8 0%, #6fa0f0 18%, #9ec0f7 42%, #ccdcf9 65%, #e0ecfa 85%, #e8f2fd 100%);
   background-attachment:fixed;
   /* padding-top = fixed nav height + safe area */
   padding-top:calc(env(safe-area-inset-top,0px) + 68px);
@@ -261,7 +261,7 @@ input[type=date].rinput{-webkit-appearance:none;appearance:none}
 /* ── SUCCESS SCREEN ── */
 #successScreen{
   display:none;position:fixed;inset:0;z-index:9999;
-  background:radial-gradient(ellipse 100% 100% at 50% 40%, #4a82e8 0%, #6fa0f0 20%, #9ec0f7 45%, #ccdcf9 70%, #e6f0fc 100%);
+  background:radial-gradient(ellipse 120% 130% at 50% 35%, #4a82e8 0%, #6fa0f0 18%, #9ec0f7 42%, #ccdcf9 65%, #e0ecfa 85%, #e8f2fd 100%);
   flex-direction:column;align-items:center;justify-content:flex-start;
 }
 #successScreen.show{display:flex}
@@ -481,8 +481,8 @@ input[type=date].rinput{-webkit-appearance:none;appearance:none}
     </div>
     <div style="display:flex;align-items:baseline;gap:3px;margin-left:auto">
       <input type="number" id="precio" min="0" step="0.01" inputmode="decimal" placeholder="0.00"
-        style="border:none;outline:none;background:transparent;font-family:inherit;font-size:20px;font-weight:700;color:#1a2040;text-align:right;width:100px" id="precioInput">
-      <span style="font-size:14px;color:rgba(60,90,160,0.5);flex-shrink:0;font-weight:600">€</span>
+        style="border:none;outline:none;background:transparent;font-family:inherit;font-size:20px;font-weight:700;color:rgba(80,130,210,0.6);text-align:right;width:100px" id="precioInput">
+      <span style="font-size:14px;color:rgba(80,130,210,0.55);flex-shrink:0;font-weight:600">€</span>
     </div>
   </div>
 </div>
