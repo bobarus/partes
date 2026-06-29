@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PARTE">
-<meta name="theme-color" content="#7aaaf0">
+<meta name="theme-color" content="#6a9ef5">
 <title>Parte de Trabajo</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -64,17 +64,19 @@ html,body{
   -moz-osx-font-smoothing:grayscale;
   background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
   background-attachment:fixed;
+  background-color:#6a9ef5;
 }
 body{padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);overscroll-behavior-y:contain}
 
 /* ── NAV ── */
 .nav{
-  padding:max(14px,env(safe-area-inset-top)) 18px 12px;
+  padding:max(14px,env(safe-area-inset-top)) 18px 14px;
+  padding-top:calc(max(14px,env(safe-area-inset-top)) + 6px);
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;z-index:100;
-  background:rgba(140,180,245,0.75);
-  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border-bottom:0.5px solid rgba(255,255,255,0.35);
+  background:linear-gradient(180deg,rgba(90,150,240,0.72) 0%,rgba(120,170,248,0.55) 100%);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:0.5px solid rgba(255,255,255,0.3);
 }
 .nav-center{flex:1;text-align:center}
 .nav-title{font-size:20px;font-weight:700;color:#fff;letter-spacing:-0.3px;text-shadow:0 1px 6px rgba(30,70,160,0.2)}
@@ -89,22 +91,24 @@ body{padding-bottom:calc(env(safe-area-inset-bottom,0px)+24px);overscroll-behavi
 .globe-btn svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 .lang-dropdown{
-  display:none;position:absolute;top:44px;right:0;
-  background:rgba(245,248,255,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-radius:16px;overflow:hidden;min-width:152px;
-  box-shadow:0 8px 32px rgba(40,80,180,0.18);
-  border:1px solid rgba(255,255,255,0.95);z-index:200;
+  display:none;position:absolute;top:48px;right:0;
+  background:rgba(120,165,245,0.45);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-radius:18px;overflow:hidden;min-width:160px;
+  border:1px solid rgba(255,255,255,0.6);
+  z-index:200;
 }
 .lang-dropdown.open{display:block}
 .lang-opt{
-  display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:15px;
-  color:#1a2a4a;cursor:pointer;
-  border-bottom:0.5px solid rgba(150,170,220,0.2);
+  display:flex;align-items:center;gap:10px;padding:13px 16px;font-size:15px;
+  color:#fff;cursor:pointer;font-weight:500;
+  border-bottom:0.5px solid rgba(255,255,255,0.2);
   font-family:inherit;background:none;border-left:none;border-right:none;border-top:none;
   width:100%;text-align:left;
 }
 .lang-opt:last-child{border-bottom:none}
-.lang-opt.active{color:#2a55c8;font-weight:700}
+.lang-opt.active{color:#fff;font-weight:700;background:rgba(255,255,255,0.18)}
+.lang-opt:active{background:rgba(255,255,255,0.25)}
 
 /* ── SECTION LABELS ── */
 .slabel{
@@ -244,8 +248,9 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
 #successScreen{
   display:none;position:fixed;inset:0;z-index:9999;
   background:radial-gradient(ellipse 80% 70% at 50% 42%, #4a82e8 0%, #6fa0f0 22%, #9ec0f7 48%, #ccdcf9 72%, #e6f0fc 100%);
+  background-color:#6a9ef5;
   flex-direction:column;align-items:center;justify-content:flex-start;
-  padding:max(60px,env(safe-area-inset-top)) 20px 36px;
+  padding:calc(max(52px,env(safe-area-inset-top)) + 16px) 20px 36px;
   gap:18px;overflow-y:auto;-webkit-overflow-scrolling:touch;
 }
 #successScreen.show{display:flex}
@@ -494,6 +499,10 @@ input[type=date].rinput{-webkit-appearance:none;-moz-appearance:none;appearance:
       <svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       <span id="shareLabel">Compartir</span>
     </button>
+    <button class="btn-share" onclick="openPhotoForm()" id="btnAddPhoto">
+      <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#0d2260;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M5 7H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-2l-2-3H7L5 7z"/><circle cx="10" cy="13" r="3"/></svg>
+      <span id="btnAddPhotoText">Añadir fotos</span>
+    </button>
     <button class="btn-new" id="btnNew" onclick="startNew()">+ Nuevo registro</button>
   </div>
 </div>
@@ -512,7 +521,7 @@ var T = {
     trabPh:'Describir los trabajos...',matPh:'Listar materiales...',horasPh:'0',precPh:'0.00',
     confirmClear:'¿Borrar todo?',shareLabel:'Compartir',
     successTitle:'¡Informe enviado!',successSub:'El parte ha sido registrado correctamente',
-    successNew:'+ Nuevo registro'},
+    addPhoto:'Añadir fotos',successNew:'+ Nuevo registro'},
   ru:{title:'Отчёт',s1:'Идентификация',s1req:'• обязательно',s2:'Персонал',s3:'Работы',s5:'Материалы',
     lCliente:'Клиент',lObra:'Объект',lFecha:'Дата',lOp:'Исполнитель',lAy:'Помощник',lVeh:'Транспорт',
     lTipo:'Тип',lHoras:'Часы',lTrab:'Выполненные работы',lComp:'Компания',lMat:'Использованные материалы',lPrecio:'Цена',
@@ -524,7 +533,7 @@ var T = {
     trabPh:'Описать работы...',matPh:'Перечислить материалы...',horasPh:'0',precPh:'0.00',
     confirmClear:'Очистить все поля?',shareLabel:'Поделиться',
     successTitle:'Отчёт отправлен!',successSub:'Наряд успешно зарегистрирован',
-    successNew:'+ Новый отчёт'},
+    addPhoto:'Добавить фото',successNew:'+ Новый отчёт'},
   en:{title:'Work report',s1:'Identification',s1req:'• required',s2:'Staff',s3:'Work',s5:'Materials',
     lCliente:'Client',lObra:'Site',lFecha:'Date',lOp:'Operative',lAy:'Assistant',lVeh:'Vehicle',
     lTipo:'Type',lHoras:'Hours',lTrab:'Work performed',lComp:'Company',lMat:'Materials used',lPrecio:'Price',
@@ -536,7 +545,7 @@ var T = {
     trabPh:'Describe work...',matPh:'List materials...',horasPh:'0',precPh:'0.00',
     confirmClear:'Clear everything?',shareLabel:'Share',
     successTitle:'Report sent!',successSub:'Work report registered successfully',
-    successNew:'+ New report'}
+    addPhoto:'Add photos',successNew:'+ New report'}
 };
 var lang = 'es';
 
@@ -757,7 +766,10 @@ function showSuccess(payload) {
   document.getElementById('successTitle').textContent = t.successTitle;
   document.getElementById('successSub').textContent   = t.successSub;
   document.getElementById('shareLabel').textContent   = t.shareLabel;
+  var addPhotoEl = document.getElementById('btnAddPhotoText');
+  if (addPhotoEl) addPhotoEl.textContent = t.addPhoto || 'Añadir fotos';
   document.getElementById('btnNew').textContent       = t.successNew;
+  var ap = document.getElementById('btnAddPhotoText'); if(ap) ap.textContent = t.addPhoto||'Añadir fotos';
 
   // re-trigger animations
   var sc = document.getElementById('successScreen');
@@ -843,6 +855,11 @@ function shareRecord() {
   var txt = lines.join('\n');
   if (navigator.share) navigator.share({title:t.successTitle,text:txt}).catch(function(){});
   else navigator.clipboard.writeText(txt).then(function(){showToast('Copiado ✓',false);}).catch(function(){showToast('Copiado ✓',false);});
+}
+
+function openPhotoForm() {
+  if (!PHOTO_FORM_URL) { showToast('No form URL', true); return; }
+  window.open(PHOTO_FORM_URL, '_blank');
 }
 
 function startNew() {
